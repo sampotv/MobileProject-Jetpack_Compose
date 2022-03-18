@@ -10,6 +10,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MobiiliprojektiR9">
         <activity
+            android:name=".RegisterAsPage"
+            android:exported="false"
+            android:label="@string/title_activity_register_as_page"
+            android:theme="@style/Theme.MobiiliprojektiR9" />
+        <activity
             android:name=".LoginPage"
             android:exported="false"
             android:label="@string/title_activity_login_page"

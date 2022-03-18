@@ -8,6 +8,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,8 +35,8 @@ class LoginPage : ComponentActivity() {
 
 @Composable
 fun Login() {
-    val email = remember { mutableStateOf("") }
-    val password = remember { mutableStateOf("") }
+    val email = rememberSaveable { mutableStateOf("") }
+    val password = rememberSaveable { mutableStateOf("") }
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -64,11 +65,13 @@ fun Login() {
             ,
             maxLines = 1)
         Spacer(modifier = Modifier.padding(20.dp))
-        Button(onClick = { /*TODO*/ }) {
+        Button(onClick = { /*TODO*/ },
+            modifier = Modifier.size(220.dp, 50.dp)) {
             Text("Kirjaudu kuljettajana")
         }
-        Button(onClick = { /*TODO*/ }) {
-            Text("Kirjaudu ajojakelijana")
+        Button(onClick = { /*TODO*/ },
+            modifier = Modifier.size(220.dp, 50.dp)) {
+            Text("Kirjaudu ajojärjästelijänä")
         }
         Spacer(modifier = Modifier.padding(50.dp))
         Text("Uusi käyttäjä? Rekisteröidy täältä!")

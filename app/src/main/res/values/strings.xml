@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">MobiiliprojektiR9</string>
     <string name="title_activity_login_page">LoginPage</string>
+    <string name="title_activity_register_as_page">RegisterAsPage</string>
 </resources>
