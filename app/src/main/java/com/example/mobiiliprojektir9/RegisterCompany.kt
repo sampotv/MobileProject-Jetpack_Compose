@@ -16,13 +16,13 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.mobiiliprojektir9.ui.theme.MobiiliprojektiR9Theme
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class)
-@Preview
 @Composable
-fun RegisterCompany(){
+fun RegisterCompany(navController: NavController){
     var emailState by remember {
         mutableStateOf("")
     }
