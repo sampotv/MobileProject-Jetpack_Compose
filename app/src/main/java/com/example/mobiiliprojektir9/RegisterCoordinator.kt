@@ -1,5 +1,7 @@
 package com.example.mobiiliprojektir9
 
+import android.service.controls.ControlsProviderService
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,28 +19,28 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.mobiiliprojektir9.ui.theme.MobiiliprojektiR9Theme
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Preview
 @Composable
-fun RegisterCompany(){
+fun RegisterCoordinator(){
     var emailState by remember {
         mutableStateOf("")
     }
     var passwordState by remember {
         mutableStateOf("")
     }
+    var phonenumState by remember {
+        mutableStateOf("")
+    }
     var companyState by remember {
         mutableStateOf("")
     }
-    val scaffoldState = rememberScaffoldState()
-    val scope = rememberCoroutineScope()
+    var (coordinatorId, setCoordinatorId) = remember{ mutableStateOf("")}
     val keyboardController = LocalSoftwareKeyboardController.current
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        scaffoldState = scaffoldState
-    ) {
+
         Column(
             modifier = Modifier
                 .padding(24.dp)
@@ -81,6 +83,23 @@ fun RegisterCompany(){
                 shape = RoundedCornerShape(8.dp)
             )
             OutlinedTextField(
+                value = phonenumState,
+                label = {
+                    Text("Puhelinnumero")
+                },
+                onValueChange = {
+                    phonenumState = it
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = { keyboardController?.hide() }),
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp)
+            )
+            OutlinedTextField(
                 value = companyState,
                 label = {
                     Text("Yritys")
@@ -92,15 +111,32 @@ fun RegisterCompany(){
             )
             Spacer(modifier = Modifier.height(24.dp))
             Button(onClick = {
-                scope.launch {
-                    scaffoldState.snackbarHostState.showSnackbar("$emailState, $passwordState, $companyState")
+                var coordinatorData = CoordinatorData().apply {
+                    email = emailState.toString()
+                    password = passwordState.toString()
+                    phoneNum = phonenumState.toString()
+                    company = companyState.toString()
                 }
+                saveCoordinatorData(coordinatorData)
             }) {
                 Text("Rekisteröidy")
             }
         }
-    }
 }
+
+fun saveCoordinatorData(coordinatorData: CoordinatorData) {
+    val db = FirebaseFirestore.getInstance()
+    db.collection("coordinator")
+        .add(coordinatorData)
+        .addOnSuccessListener { documentReference ->
+            Log.d(ControlsProviderService.TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+
+        }
+        .addOnFailureListener { e ->
+            Log.w(ControlsProviderService.TAG, "Error adding document", e)
+        }
+}
+
 
 //@Preview
 //@Composable

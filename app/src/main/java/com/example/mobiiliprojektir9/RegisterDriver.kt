@@ -55,6 +55,9 @@ fun RegisterAsDriver(){
     var passwordState by remember {
         mutableStateOf("")
     }
+    var phonenumState by remember {
+        mutableStateOf("")
+    }
     var companyState by remember {
         mutableStateOf("")
     }
@@ -109,6 +112,23 @@ fun RegisterAsDriver(){
             shape = RoundedCornerShape(8.dp)
         )
         OutlinedTextField(
+            value = phonenumState,
+            label = {
+                Text("Puhelinnumero")
+            },
+            onValueChange = {
+                phonenumState = it
+            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = { keyboardController?.hide() }),
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp)
+        )
+        OutlinedTextField(
             value = companyState,
             label = {
                 Text("Yritys")
@@ -127,6 +147,7 @@ fun RegisterAsDriver(){
             var driverData = DriverData().apply {
                 email = emailState.toString()
                 password = passwordState.toString()
+                phoneNum = phonenumState.toString()
                 company = companyState.toString()
             }
             saveDriverData(driverData)
