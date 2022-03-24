@@ -1,13 +1,8 @@
 package com.example.mobiiliprojektir9
 
-import android.content.Intent
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -19,34 +14,19 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.mobiiliprojektir9.ui.theme.MobiiliprojektiR9Theme
 
-class LoginPage : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setContent {
-            MobiiliprojektiR9Theme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    Login()
-                }
-            }
-        }
-    }
-}
 
 @Composable
-fun Login() {
+fun Login(navController: NavController) {
     val email = rememberSaveable { mutableStateOf("") }
     val password = rememberSaveable { mutableStateOf("") }
     var passwordVisibility by remember { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(20.dp)
     )
@@ -99,7 +79,7 @@ fun Login() {
         }
         Spacer(modifier = Modifier.padding(50.dp))
         Text("Uusi käyttäjä? Rekisteröidy täältä!")
-        Button(onClick = { /*TODO*/ }) {
+        Button(onClick = {navController.navigate(route = Screens.RegisterAs.route)}) {
             Text("Rekisteröidy")
         }
 
@@ -110,6 +90,6 @@ fun Login() {
 @Composable
 fun LoginPreview() {
     MobiiliprojektiR9Theme {
-        Login()
+        Login(navController = rememberNavController())
     }
 }

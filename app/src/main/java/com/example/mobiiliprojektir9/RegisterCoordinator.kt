@@ -18,14 +18,15 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+
 import com.example.mobiiliprojektir9.ui.theme.MobiiliprojektiR9Theme
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class)
-@Preview
 @Composable
-fun RegisterCoordinator(){
+fun RegisterCoordinator(navController: NavController){
     var emailState by remember {
         mutableStateOf("")
     }

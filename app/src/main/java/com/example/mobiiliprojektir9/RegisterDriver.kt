@@ -22,8 +22,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.mobiiliprojektir9.ui.theme.MobiiliprojektiR9Theme
 import com.google.firebase.firestore.FirebaseFirestore
+
 
 //class RegisterDriver : ComponentActivity() {
 //
@@ -44,11 +46,13 @@ import com.google.firebase.firestore.FirebaseFirestore
 //        }
 //    }
 //}
-@ExperimentalComposeUiApi
-@Preview
+
+
+
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun RegisterAsDriver(){
-    val context = LocalContext.current
+fun RegisterDriver(navController: NavController){
+
     var emailState by remember {
         mutableStateOf("")
     }
