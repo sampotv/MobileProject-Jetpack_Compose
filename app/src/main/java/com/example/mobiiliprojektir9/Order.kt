@@ -1,7 +1,10 @@
 package com.example.mobiiliprojektir9
 
+import java.util.*
+
 data class Order(
-    val locationFrom: String,
-    val locationTo: String,
-    val cargo: String
+    var locationFrom: String = "",
+    var locationTo: String = "",
+    var cargo: String = "",
+//    val id: UUID
 )

@@ -35,7 +35,7 @@ fun SetUpNavigation(navController : NavHostController) {
         composable(
             route = Screens.RegisterOrganizer.route
         ){
-            RegisterCompany(navController = navController)
+            RegisterCoordinator(navController = navController)
         }
     }
 }
