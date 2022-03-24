@@ -25,25 +25,25 @@ import androidx.compose.ui.unit.dp
 import com.example.mobiiliprojektir9.ui.theme.MobiiliprojektiR9Theme
 import com.google.firebase.firestore.FirebaseFirestore
 
-class RegisterDriver : ComponentActivity() {
-
-    @OptIn(ExperimentalComposeUiApi::class)
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setContent {
-            MobiiliprojektiR9Theme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    RegisterAsDriver()
-                }
-            }
-        }
-    }
-}
+//class RegisterDriver : ComponentActivity() {
+//
+//    @OptIn(ExperimentalComposeUiApi::class)
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//
+//        setContent {
+//            MobiiliprojektiR9Theme {
+//                // A surface container using the 'background' color from the theme
+//                Surface(
+//                    modifier = Modifier.fillMaxSize(),
+//                    color = MaterialTheme.colors.background
+//                ) {
+//                    RegisterAsDriver()
+//                }
+//            }
+//        }
+//    }
+//}
 @ExperimentalComposeUiApi
 @Preview
 @Composable
@@ -61,8 +61,9 @@ fun RegisterAsDriver(){
     var companyState by remember {
         mutableStateOf("")
     }
+    val db = FirebaseFirestore.getInstance()
     val isSaved = remember { mutableStateOf(false)}
-    val scope = rememberCoroutineScope()
+
     val keyboardController = LocalSoftwareKeyboardController.current
     Column(
         modifier = Modifier
@@ -150,7 +151,7 @@ fun RegisterAsDriver(){
                 phoneNum = phonenumState.toString()
                 company = companyState.toString()
             }
-            saveDriverData(driverData)
+            saveDriverData(driverData, db)
 //            Toast.makeText(
 //                context,
 //                "$emailState, $passwordState, $companyState",
@@ -162,8 +163,7 @@ fun RegisterAsDriver(){
     }
 }
 
-fun saveDriverData(driverData: DriverData) {
-    val db = FirebaseFirestore.getInstance()
+fun saveDriverData(driverData: DriverData, db: FirebaseFirestore) {
     db.collection("drivers")
         .add(driverData)
         .addOnSuccessListener { documentReference ->

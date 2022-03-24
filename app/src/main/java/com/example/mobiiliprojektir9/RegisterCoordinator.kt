@@ -40,7 +40,7 @@ fun RegisterCoordinator(){
     }
     var (coordinatorId, setCoordinatorId) = remember{ mutableStateOf("")}
     val keyboardController = LocalSoftwareKeyboardController.current
-
+    val db = FirebaseFirestore.getInstance()
         Column(
             modifier = Modifier
                 .padding(24.dp)
@@ -117,15 +117,14 @@ fun RegisterCoordinator(){
                     phoneNum = phonenumState.toString()
                     company = companyState.toString()
                 }
-                saveCoordinatorData(coordinatorData)
+                saveCoordinatorData(coordinatorData, db)
             }) {
                 Text("Rekisteröidy")
             }
         }
 }
 
-fun saveCoordinatorData(coordinatorData: CoordinatorData) {
-    val db = FirebaseFirestore.getInstance()
+fun saveCoordinatorData(coordinatorData: CoordinatorData, db: FirebaseFirestore) {
     db.collection("coordinator")
         .add(coordinatorData)
         .addOnSuccessListener { documentReference ->
