@@ -2,8 +2,10 @@ package com.example.mobiiliprojektir9
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.Composable
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -19,25 +21,27 @@ class Register(password: String, email: String): ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent() {
-            register(this, auth, password, email)
+           register(this, password, email)
+        }
+    }
+    fun register(context: ComponentActivity, password: String, email: String){
+        val auth: FirebaseAuth = FirebaseAuth.getInstance()
+        Log.d("auth", "create user")
+        auth.createUserWithEmailAndPassword(
+            email.trim(),
+            password.trim()
+        ).addOnCompleteListener(context){ task ->
+            if (task.isSuccessful){
+                Log.d("AUTH", "Success!")
+            }else{
+                Log.d("AUTH", "Failed: ${task.exception}")
+                Toast.makeText(context, "${task.exception}", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }
 
-fun register(context: ComponentActivity, auth: FirebaseAuth, password: String, email: String){
-    val auth = auth
-    Log.d("auth", "create user")
-    auth.createUserWithEmailAndPassword(
-        email.trim(),
-        password.trim()
-    ).addOnCompleteListener(context){ task ->
-        if (task.isSuccessful){
-            Log.d("AUTH", "Success!")
-        }else{
-            Log.d("AUTH", "Failed: ${task.exception}")
-        }
-    }
-}
+
 //    private fun signIn() {
 //
 //        val providers = arrayListOf(

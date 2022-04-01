@@ -2,6 +2,7 @@ package com.example.mobiiliprojektir9
 
 import android.app.Activity.RESULT_OK
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -23,21 +24,27 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.mobiiliprojektir9.ui.theme.MobiiliprojektiR9Theme
-import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 
 
 //var user: FirebaseUser? = null
 
-//@OptIn(ExperimentalComposeUiApi::class)
+
 @Composable
 fun RegisterDriver(navController: NavController){
     val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    var validEmail by rememberSaveable {
+        mutableStateOf(true)
+    }
+    var validPassword by rememberSaveable {
+        mutableStateOf(true)
+    }
     var emailState by rememberSaveable {
         mutableStateOf("")
     }
@@ -47,9 +54,11 @@ fun RegisterDriver(navController: NavController){
     var companyState by rememberSaveable {
         mutableStateOf("")
     }
+    var phoneNumState by rememberSaveable {
+        mutableStateOf("")
+    }
 //    val scaffoldState = rememberScaffoldState()
 //    val scope = rememberCoroutineScope()
-//    val keyboardController = LocalSoftwareKeyboardController.current
 //    Scaffold(
 //        modifier = Modifier.fillMaxSize(),
 //        scaffoldState = scaffoldState
@@ -76,24 +85,20 @@ fun RegisterDriver(navController: NavController){
                     emailState = it
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email,imeAction = ImeAction.Done),
-//                keyboardActions = KeyboardActions(
-//                    onDone = {keyboardController?.hide()}),
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp)
             )
             OutlinedTextField(
                 value = passwordState,
-                label = {
-                    Text("Salasana")
-                },
+                label = {Text("Salasana")},
                 onValueChange = {
                     passwordState = it
                 },
-//                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password,imeAction = ImeAction.Done),
-//                keyboardActions = KeyboardActions(
-//                    onDone = {keyboardController?.hide()}),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password,imeAction = ImeAction.Done),
+
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp)
+
             )
             OutlinedTextField(
                 value = companyState,
@@ -103,30 +108,75 @@ fun RegisterDriver(navController: NavController){
                 onValueChange = {
                     companyState = it
                 },
-//                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-//                keyboardActions = KeyboardActions(
-//                    onDone = {keyboardController?.hide()}),
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp)
+            )
+            OutlinedTextField(
+                value = phoneNumState,
+                label = {
+                    Text("Puhelinnumero")
+                },
+                onValueChange = {
+                    phoneNumState = it
+                },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp)
             )
             Spacer(modifier = Modifier.height(24.dp))
             Button(onClick = {
-                auth.createUserWithEmailAndPassword(
-                    emailState.trim(),
-                    passwordState.trim()
-                ).addOnCompleteListener(){ task ->
-                    if (task.isSuccessful){
-                        Log.d("AUTH", "Success!")
-                    }else{
-                        Log.d("AUTH", "Failed: ${task.exception}")
-                    }
-                }
+                register(passwordState,
+                    emailState,
+                    phoneNumState,
+                    companyState)
+
             }) {
                 Text("Rekisteröidy")
             }
         }
     }
 
+fun saveDriverData(driverData: DriverData) {
+    val db = FirebaseFirestore.getInstance()
+    db.collection("drivers")
+        .add(driverData)
+        .addOnSuccessListener { documentReference ->
+            Log.d("saveDriverData","DocumentSnapshot added with ID: ${documentReference.id}")
+        }
+        .addOnFailureListener { e ->
+            Log.w("SaveDriverData", "Error adding document", e)
+        }
+}
+
+fun register(registerPassword: String,
+             registerEmail: String,
+             registerPhoneNum: String,
+             registerCompany: String
+){
+    val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    Log.d("auth", "create user")
+    auth.createUserWithEmailAndPassword(
+        registerEmail.trim(),
+        registerPassword.trim()
+    ).addOnCompleteListener(){ task ->
+        if (task.isSuccessful){
+            val user = auth.currentUser
+            if (user != null) {
+                Log.d("AUTH", "success! ${user.uid}")
+                var driverData = DriverData().apply {
+                    driverId = user.uid
+                    email = registerEmail
+                    password = registerPassword
+                    phoneNum = registerPhoneNum
+                    company = registerCompany
+                }
+                saveDriverData(driverData)
+            }
+
+        }else{
+            Log.d("AUTH", "Failed: ${task.exception}")
+        }
+    }
+}
 
 //@Preview()
 //@Composable
