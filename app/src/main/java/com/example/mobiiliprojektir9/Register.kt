@@ -24,7 +24,7 @@ class Register(password: String, email: String): ComponentActivity() {
            register(this, password, email)
         }
     }
-    fun register(context: ComponentActivity, password: String, email: String){
+    private fun register(context: ComponentActivity, password: String, email: String){
         val auth: FirebaseAuth = FirebaseAuth.getInstance()
         Log.d("auth", "create user")
         auth.createUserWithEmailAndPassword(
