@@ -11,12 +11,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobiiliprojektir9.ui.theme.MobiiliprojektiR9Theme
+import com.google.firebase.auth.FirebaseAuth
 
 
 class MainActivity : ComponentActivity() {
 
+
     lateinit var navController : NavHostController
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContent {
             MobiiliprojektiR9Theme {
@@ -28,6 +31,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 
 
 

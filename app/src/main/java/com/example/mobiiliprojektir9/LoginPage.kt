@@ -82,7 +82,6 @@ fun Login(navController: NavController) {
         Button(onClick = {navController.navigate(route = Screens.RegisterAs.route)}) {
             Text("Rekisteröidy")
         }
-
     }
 }
 

@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun RegisterCompany(navController: NavController){
+fun RegisterCoordinator(navController: NavController){
     var emailState by remember {
         mutableStateOf("")
     }

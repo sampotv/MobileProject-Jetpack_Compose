@@ -62,9 +62,9 @@ fun OrderRow(order: Order, modifier: Modifier){
         Column(
            modifier.padding(2.dp)
         ){
-            Text(order.locationFrom)
-            Text(order.locationTo)
-            Text(order.cargo)
+            Text("Lähtöosoite: " + order.locationFrom)
+            Text("Kohdeosoite: " + order.locationTo)
+            Text("Sisältö: " + order.cargo)
         }
     }
 }
@@ -73,14 +73,14 @@ fun OrderRow(order: Order, modifier: Modifier){
 @Composable
 fun OpenDeliveryPreview(){
     val orders = listOf(
-        Order("Lähtöosoite:", "Kohdeosoite:", "Rahti:"),
-        Order("Lähtöosoite:", "Kohdeosoite:", "Rahti:"),
-        Order("Lähtöosoite:", "Kohdeosoite:", "Rahti:"),
-        Order("Lähtöosoite:", "Kohdeosoite:", "Rahti:"),
-        Order("Lähtöosoite:", "Kohdeosoite:", "Rahti:"),
-        Order("Lähtöosoite:", "Kohdeosoite:", "Rahti:"),
-        Order("Lähtöosoite:", "Kohdeosoite:", "Rahti:"),
-        Order("Lähtöosoite:", "Kohdeosoite:", "Rahti:")
+        Order("Osoite 1, 10010", "Osoite 2, 20020", "Joku tavara"),
+        Order("Osoite 1, 10010", "Osoite 2, 20020", "Joku tavara"),
+        Order("Osoite 1, 10010", "Osoite 2, 20020", "Joku tavara"),
+        Order("Osoite 1, 10010", "Osoite 2, 20020", "Joku tavara"),
+        Order("Osoite 1, 10010", "Osoite 2, 20020", "Joku tavara"),
+        Order("Osoite 1, 10010", "Osoite 2, 20020", "Joku tavara"),
+        Order("Osoite 1, 10010", "Osoite 2, 20020", "Joku tavara"),
+        Order("Osoite 1, 10010", "Osoite 2, 20020", "Joku tavara")
     )
     OpenDeliveries(orders)
 }
