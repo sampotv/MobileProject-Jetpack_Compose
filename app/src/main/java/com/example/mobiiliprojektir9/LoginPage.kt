@@ -1,5 +1,8 @@
 package com.example.mobiiliprojektir9
 
+import android.content.ContentValues.TAG
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -7,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -17,13 +21,20 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobiiliprojektir9.ui.theme.MobiiliprojektiR9Theme
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.FirebaseUser
 
 
 @Composable
 fun Login(navController: NavController) {
-    val email = rememberSaveable { mutableStateOf("") }
-    val password = rememberSaveable { mutableStateOf("") }
+    var email by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
     var passwordVisibility by remember { mutableStateOf(false) }
+
+    val auth: FirebaseAuth = FirebaseAuth.getInstance()
+
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -35,8 +46,8 @@ fun Login(navController: NavController) {
         Text(text = "Kirjaudu sisään", fontSize = 20.sp)
         Spacer(modifier = Modifier.padding(5.dp))
         TextField(
-            value = email.value,
-            onValueChange = { email.value = it },
+            value = email,
+            onValueChange = { email = it },
             placeholder = { Text("Email") },
             modifier = Modifier
                 .width(300.dp)
@@ -44,8 +55,8 @@ fun Login(navController: NavController) {
             maxLines = 1
         )
 
-        TextField(value = password.value,
-            onValueChange = { password.value = it },
+        TextField(value = password,
+            onValueChange = { password = it },
             placeholder = { Text("Salasana") },
             modifier = Modifier
                 .width(300.dp)
@@ -66,7 +77,43 @@ fun Login(navController: NavController) {
         )
         Spacer(modifier = Modifier.padding(20.dp))
         Button(
-            onClick = { /*TODO*/ },
+            onClick = {
+                auth.signInWithEmailAndPassword(email.trim(), password.trim())
+                    .addOnCompleteListener() { task ->
+                        if (task.isSuccessful) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithEmail:success")
+                            val user = auth.currentUser
+                            if (user != null) {
+                                updateUI(user, navController)
+                            }
+                        } else {
+                            val errorCode = (task.exception as FirebaseAuthException?)!!.errorCode
+
+                            when (errorCode) {
+                                "ERROR_WRONG_PASSWORD" -> Toast.makeText(
+                                    context, "Salasana on virheellinen.",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                "ERROR_INVALID_EMAIL" -> Toast.makeText(
+                                    context, "Virheellinen sähköpostiosoite.",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                "ERROR_USER_NOT_FOUND" -> Toast.makeText(
+                                    context, "Käyttäjää ei löydy.",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                else -> {
+                                    Toast.makeText(
+                                        context, "Tuntematon virhe.",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                    Log.w(TAG, "signInWithEmail:failure", task.exception)
+                                }
+                            }
+                        }
+                    }
+            },
             modifier = Modifier.size(220.dp, 50.dp)
         ) {
             Text("Kirjaudu kuljettajana")
@@ -79,10 +126,17 @@ fun Login(navController: NavController) {
         }
         Spacer(modifier = Modifier.padding(50.dp))
         Text("Uusi käyttäjä? Rekisteröidy täältä!")
-        Button(onClick = {navController.navigate(route = Screens.RegisterAs.route)}) {
+        Button(onClick = { navController.navigate(route = Screens.RegisterAs.route) }) {
             Text("Rekisteröidy")
         }
     }
+}
+
+private fun updateUI(user: FirebaseUser, navController: NavController) {
+    //erottelu, onko ajojärjestelijä vai ajaja?
+    //navController.navigate(route = Screens.CreateJobs.route)
+    navController.navigate(route = Screens.OpenOrders.route)
+
 }
 
 @Preview(showSystemUi = true)

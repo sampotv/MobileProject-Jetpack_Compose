@@ -1,5 +1,6 @@
 package com.example.mobiiliprojektir9
 
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -38,5 +39,17 @@ fun SetUpNavigation(navController : NavHostController) {
         ){
             RegisterCoordinator(navController = navController)
         }
+        composable(
+            route = Screens.OpenOrders.route
+        ){
+            val orders : List<Order> = emptyList() //onko parempi tapa?
+            OpenDeliveries(orders = orders, navController = navController)
+        }
+        /*composable(
+            route = Screens.CreateJobs.route
+        ){
+
+            CreateJobs(navController = navController)
+        }*/
     }
 }

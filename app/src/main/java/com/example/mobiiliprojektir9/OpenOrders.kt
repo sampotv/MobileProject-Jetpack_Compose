@@ -16,11 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 
 @Composable
 fun OpenDeliveries(
-    orders: List<Order>
+    orders: List<Order>,
+    navController: NavController
 ){
     Column(
         modifier = Modifier
@@ -57,7 +60,9 @@ fun OrderRow(order: Order, modifier: Modifier){
             .padding(8.dp, top = 20.dp)
             .border(
                 border = BorderStroke(1.dp, Color.Black),
-                shape = RoundedCornerShape(8.dp)).padding(10.dp),
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(10.dp),
     ){
         Column(
            modifier.padding(2.dp)
@@ -82,5 +87,5 @@ fun OpenDeliveryPreview(){
         Order("Osoite 1, 10010", "Osoite 2, 20020", "Joku tavara"),
         Order("Osoite 1, 10010", "Osoite 2, 20020", "Joku tavara")
     )
-    OpenDeliveries(orders)
+    OpenDeliveries(orders, rememberNavController())
 }

@@ -8,4 +8,6 @@ sealed class Screens(val route : String)
     object RegisterAs : Screens(route = "register_as_screen")
     object RegisterDriver : Screens(route = "register_driver")
     object RegisterOrganizer : Screens(route = "register_organizer")
+    object OpenOrders : Screens(route = "open_orders")
+    //object CreateJobs : Screens(route = "open_orders")
 }
