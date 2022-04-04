@@ -1,6 +1,7 @@
 package com.example.mobiiliprojektir9
 
 import android.app.Activity.RESULT_OK
+import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -14,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -22,8 +24,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -64,9 +69,14 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterDriver(navController: NavController) {
+    val context = LocalContext.current
+    var emailErrorState by remember { mutableStateOf(false)}
+    var passwordErrorState by remember { mutableStateOf(false)}
+    var passwordVisibility by remember { mutableStateOf(true)}
+    var companyErrorState by remember { mutableStateOf(false)}
+    var phoneNumErrorState by remember { mutableStateOf(false)}
 
     var emailState by remember {
-
         mutableStateOf("")
     }
     var passwordState by rememberSaveable {
@@ -78,12 +88,6 @@ fun RegisterDriver(navController: NavController) {
     var phoneNumState by rememberSaveable {
         mutableStateOf("")
     }
-//    val scaffoldState = rememberScaffoldState()
-//    val scope = rememberCoroutineScope()
-//    Scaffold(
-//        modifier = Modifier.fillMaxSize(),
-//        scaffoldState = scaffoldState
-//    ) {
     Column(
         modifier = Modifier
             .padding(24.dp)
@@ -99,72 +103,141 @@ fun RegisterDriver(navController: NavController) {
         Spacer(modifier = Modifier.height(24.dp))
         OutlinedTextField(
             value = emailState,
-            label = {
-                Text("Email")
-            },
             onValueChange = {
+                if (emailErrorState){
+                    emailErrorState = false
+                }
                 emailState = it
             },
+            isError = emailErrorState,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Done
             ),
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(8.dp),
+            maxLines = 1,
+            label = {
+                Text("Sähköpostiosoite")
+            },
         )
+        if(emailErrorState){
+            Text(text = "Tarkista sähköpostiosoite", color = Color.Red)
+        }
         OutlinedTextField(
             value = passwordState,
-            label = { Text("Salasana") },
             onValueChange = {
+                if(passwordErrorState) {
+                    passwordErrorState = false
+                }
                 passwordState = it
             },
+            isError = passwordErrorState,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
             ),
-
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp)
-
+            shape = RoundedCornerShape(8.dp),
+            maxLines = 1,
+            label = { Text("Salasana") },
+            visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                IconButton(onClick = {
+                    passwordVisibility = !passwordVisibility
+                }){
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_visibility),
+                        contentDescription = "visibility"
+                    )
+                }
+            }
         )
+        if(passwordErrorState) {
+            Text(text = "Tarkista salasana")
+        }
         OutlinedTextField(
             value = companyState,
+            onValueChange = {
+                if(companyErrorState){
+                    companyErrorState = false
+                }
+                companyState = it
+            },
+            isError = companyErrorState,
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done
+            ),
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp),
             label = {
                 Text("Yritys")
             },
-            onValueChange = {
-                companyState = it
-            },
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp)
         )
+        if(companyErrorState){
+            Text(text = "Tarkista yritys")
+        }
         OutlinedTextField(
             value = phoneNumState,
+            onValueChange = {
+                if(phoneNumErrorState){
+                    phoneNumErrorState = false
+                }
+                phoneNumState = it
+            },
+            isError = phoneNumErrorState,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done
+            ),
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp),
             label = {
                 Text("Puhelinnumero")
             },
-            onValueChange = {
-                phoneNumState = it
-            },
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp)
         )
+        if(phoneNumErrorState){
+            Text(text = "Tarkista puhelinnumero")
+        }
         Spacer(modifier = Modifier.height(24.dp))
         Button(onClick = {
-            register(
-                passwordState,
-                emailState,
-                phoneNumState,
-                companyState
-            )
+            when{
+                emailState.isEmpty() -> {
+                    emailErrorState = true
+                }
+                passwordState.isEmpty() -> {
+                    passwordErrorState = true
+                }
+                companyState.isEmpty() -> {
+                    companyErrorState = true
+                }
+                phoneNumState.isEmpty() -> {
+                    phoneNumErrorState = true
+                }
+                else -> {
+                    passwordErrorState = false
+                    emailErrorState = false
+                    companyErrorState = false
+                    phoneNumErrorState = false
 
+                    driverRegister(
+                        context,
+                        passwordState,
+                        setPasswordErrorState = {passwordErrorState = it},
+                        emailState,
+                        setEmailErrorState = {emailErrorState = it},
+                        phoneNumState,
+                        companyState
+                    )
+                }
+            }
         }) {
             Text("Rekisteröidy")
-
         }
     }
 }
-fun saveDriverData(driverData: DriverData) {
+
+fun saveDriverData(driverData: DriverData, context: Context, user: FirebaseUser) {
     val db = FirebaseFirestore.getInstance()
     db.collection("drivers")
         .add(driverData)
@@ -176,12 +249,23 @@ fun saveDriverData(driverData: DriverData) {
         }
         .addOnFailureListener { e ->
             Log.w("SaveDriverData", "Error adding document", e)
+            user.delete().addOnCompleteListener{task ->
+                if(task.isSuccessful){
+                    Log.d(TAG, "User account deleted")
+                }
+            }
+            Toast.makeText(context, "Tallettaminen tietokantaan epäonnistui", Toast.LENGTH_SHORT).show()
         }
 }
 
-fun register(
+
+
+fun driverRegister(
+    context: Context,
     registerPassword: String,
+    setPasswordErrorState: (Boolean) -> Unit,
     registerEmail: String,
+    setEmailErrorState: (Boolean) -> Unit,
     registerPhoneNum: String,
     registerCompany: String
 ) {
@@ -190,7 +274,7 @@ fun register(
     auth.createUserWithEmailAndPassword(
         registerEmail.trim(),
         registerPassword.trim()
-    ).addOnCompleteListener() { task ->
+    ).addOnCompleteListener { task ->
         if (task.isSuccessful) {
             val user = auth.currentUser
             if (user != null) {
@@ -202,11 +286,18 @@ fun register(
                     phoneNum = registerPhoneNum
                     company = registerCompany
                 }
-                saveDriverData(driverData)
+                saveDriverData(driverData, context, user)
             }
 
         } else {
             Log.d("AUTH", "Failed: ${task.exception}")
+            Toast.makeText(context, "${task.exception}", Toast.LENGTH_SHORT).show()
+            if(task.exception.toString() == "com.google.firebase.auth.FirebaseAuthWeakPasswordException: The given password is invalid. [ Password should be at least 6 characters ]"){
+                setPasswordErrorState(true)
+            }
+            else if(task.exception.toString() == "Failed: com.google.firebase.auth.FirebaseAuthInvalidCredentialsException: The email address is badly formatted."){
+                setEmailErrorState(true)
+            }
         }
     }
 }

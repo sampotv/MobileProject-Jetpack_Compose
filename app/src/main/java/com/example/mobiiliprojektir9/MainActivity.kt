@@ -16,7 +16,6 @@ import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : ComponentActivity() {
 
-
     lateinit var navController : NavHostController
     override fun onCreate(savedInstanceState: Bundle?) {
 
