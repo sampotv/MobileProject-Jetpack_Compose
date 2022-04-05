@@ -3,7 +3,6 @@ buildscript {
         // Check that you have the following line (if not, add it):
         google()  // Google's Maven repository
         mavenCentral()
-
     }
     dependencies {
         // Add this line
@@ -14,6 +13,7 @@ buildscript {
         compose_version = '1.0.1'
     }
 }// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
 plugins {
     id 'com.android.application' version '7.1.2' apply false
     id 'com.android.library' version '7.1.2' apply false
