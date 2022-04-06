@@ -1,8 +1,12 @@
 package com.example.mobiiliprojektir9
 
+import android.app.Activity.RESULT_OK
+import android.content.Context
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
 import android.os.Bundle
 import android.service.controls.ControlsProviderService.TAG
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -11,20 +15,32 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.mobiiliprojektir9.ui.theme.MobiiliprojektiR9Theme
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
+import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.launch
+
 
 
 //class RegisterDriver : ComponentActivity() {
@@ -48,27 +64,30 @@ import com.google.firebase.firestore.FirebaseFirestore
 //}
 
 
+//var user: FirebaseUser? = null
 
-@OptIn(ExperimentalComposeUiApi::class)
+
 @Composable
-fun RegisterDriver(navController: NavController){
+fun RegisterDriver(navController: NavController) {
+    val context = LocalContext.current
+    var emailErrorState by remember { mutableStateOf(false)}
+    var passwordErrorState by remember { mutableStateOf(false)}
+    var passwordVisibility by remember { mutableStateOf(true)}
+    var companyErrorState by remember { mutableStateOf(false)}
+    var phoneNumErrorState by remember { mutableStateOf(false)}
 
     var emailState by remember {
         mutableStateOf("")
     }
-    var passwordState by remember {
+    var passwordState by rememberSaveable {
         mutableStateOf("")
     }
-    var phonenumState by remember {
+    var companyState by rememberSaveable {
         mutableStateOf("")
     }
-    var companyState by remember {
+    var phoneNumState by rememberSaveable {
         mutableStateOf("")
     }
-    val db = FirebaseFirestore.getInstance()
-    val isSaved = remember { mutableStateOf(false)}
-
-    val keyboardController = LocalSoftwareKeyboardController.current
     Column(
         modifier = Modifier
             .padding(24.dp)
@@ -84,98 +103,203 @@ fun RegisterDriver(navController: NavController){
         Spacer(modifier = Modifier.height(24.dp))
         OutlinedTextField(
             value = emailState,
-            label = {
-                Text("Email")
-            },
             onValueChange = {
+                if (emailErrorState){
+                    emailErrorState = false
+                }
                 emailState = it
             },
+            isError = emailErrorState,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Done
             ),
-            keyboardActions = KeyboardActions(
-                onDone = { keyboardController?.hide() }),
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(8.dp),
+            maxLines = 1,
+            label = {
+                Text("Sähköpostiosoite")
+            },
         )
+        if(emailErrorState){
+            Text(text = "Tarkista sähköpostiosoite", color = Color.Red)
+        }
         OutlinedTextField(
             value = passwordState,
-            label = {
-                Text("Salasana")
-            },
             onValueChange = {
+                if(passwordErrorState) {
+                    passwordErrorState = false
+                }
                 passwordState = it
             },
+            isError = passwordErrorState,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
             ),
-            keyboardActions = KeyboardActions(
-                onDone = { keyboardController?.hide() }),
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(8.dp),
+            maxLines = 1,
+            label = { Text("Salasana") },
+            visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                IconButton(onClick = {
+                    passwordVisibility = !passwordVisibility
+                }){
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_visibility),
+                        contentDescription = "visibility"
+                    )
+                }
+            }
         )
-        OutlinedTextField(
-            value = phonenumState,
-            label = {
-                Text("Puhelinnumero")
-            },
-            onValueChange = {
-                phonenumState = it
-            },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = { keyboardController?.hide() }),
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp)
-        )
+        if(passwordErrorState) {
+            Text(text = "Tarkista salasana")
+        }
         OutlinedTextField(
             value = companyState,
+            onValueChange = {
+                if(companyErrorState){
+                    companyErrorState = false
+                }
+                companyState = it
+            },
+            isError = companyErrorState,
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done
+            ),
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp),
             label = {
                 Text("Yritys")
             },
-            onValueChange = {
-                companyState = it
-            },
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(
-                onDone = { keyboardController?.hide() }),
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp)
         )
+        if(companyErrorState){
+            Text(text = "Tarkista yritys")
+        }
+        OutlinedTextField(
+            value = phoneNumState,
+            onValueChange = {
+                if(phoneNumErrorState){
+                    phoneNumErrorState = false
+                }
+                phoneNumState = it
+            },
+            isError = phoneNumErrorState,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done
+            ),
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp),
+            label = {
+                Text("Puhelinnumero")
+            },
+        )
+        if(phoneNumErrorState){
+            Text(text = "Tarkista puhelinnumero")
+        }
         Spacer(modifier = Modifier.height(24.dp))
         Button(onClick = {
-            var driverData = DriverData().apply {
-                email = emailState.toString()
-                password = passwordState.toString()
-                phoneNum = phonenumState.toString()
-                company = companyState.toString()
+            when{
+                emailState.isEmpty() -> {
+                    emailErrorState = true
+                }
+                passwordState.isEmpty() -> {
+                    passwordErrorState = true
+                }
+                companyState.isEmpty() -> {
+                    companyErrorState = true
+                }
+                phoneNumState.isEmpty() -> {
+                    phoneNumErrorState = true
+                }
+                else -> {
+                    passwordErrorState = false
+                    emailErrorState = false
+                    companyErrorState = false
+                    phoneNumErrorState = false
+
+                    driverRegister(
+                        context,
+                        passwordState,
+                        setPasswordErrorState = {passwordErrorState = it},
+                        emailState,
+                        setEmailErrorState = {emailErrorState = it},
+                        phoneNumState,
+                        companyState
+                    )
+                }
             }
-            saveDriverData(driverData, db)
-//            Toast.makeText(
-//                context,
-//                "$emailState, $passwordState, $companyState",
-//                Toast.LENGTH_LONG
-//            ).show()
         }) {
             Text("Rekisteröidy")
         }
     }
 }
 
-fun saveDriverData(driverData: DriverData, db: FirebaseFirestore) {
+fun saveDriverData(driverData: DriverData, context: Context, user: FirebaseUser) {
+    val db = FirebaseFirestore.getInstance()
     db.collection("drivers")
         .add(driverData)
         .addOnSuccessListener { documentReference ->
-            Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+            Log.d(
+                "saveDriverData",
+                "DocumentSnapshot added with ID: ${documentReference.id}"
+            )
         }
         .addOnFailureListener { e ->
-            Log.w(TAG, "Error adding document", e)
+            Log.w("SaveDriverData", "Error adding document", e)
+            user.delete().addOnCompleteListener{task ->
+                if(task.isSuccessful){
+                    Log.d(TAG, "User account deleted")
+                }
+            }
+            Toast.makeText(context, "Tallettaminen tietokantaan epäonnistui", Toast.LENGTH_SHORT).show()
         }
+}
+
+
+
+fun driverRegister(
+    context: Context,
+    registerPassword: String,
+    setPasswordErrorState: (Boolean) -> Unit,
+    registerEmail: String,
+    setEmailErrorState: (Boolean) -> Unit,
+    registerPhoneNum: String,
+    registerCompany: String
+) {
+    val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    Log.d("auth", "create user")
+    auth.createUserWithEmailAndPassword(
+        registerEmail.trim(),
+        registerPassword.trim()
+    ).addOnCompleteListener { task ->
+        if (task.isSuccessful) {
+            val user = auth.currentUser
+            if (user != null) {
+                Log.d("AUTH", "success! ${user.uid}")
+                var driverData = DriverData().apply {
+                    driverId = user.uid
+                    email = registerEmail
+                    password = registerPassword
+                    phoneNum = registerPhoneNum
+                    company = registerCompany
+                }
+                saveDriverData(driverData, context, user)
+            }
+
+        } else {
+            Log.d("AUTH", "Failed: ${task.exception}")
+            Toast.makeText(context, "${task.exception}", Toast.LENGTH_SHORT).show()
+            if(task.exception.toString() == "com.google.firebase.auth.FirebaseAuthWeakPasswordException: The given password is invalid. [ Password should be at least 6 characters ]"){
+                setPasswordErrorState(true)
+            }
+            else if(task.exception.toString() == "Failed: com.google.firebase.auth.FirebaseAuthInvalidCredentialsException: The email address is badly formatted."){
+                setEmailErrorState(true)
+            }
+        }
+    }
 }
 
 //@Preview()
