@@ -40,6 +40,7 @@ class MainActivity : ComponentActivity() {
                 //jos käyttäjä on kirjautuneena, ohjaa oikealle sivulle
                 val currentUser = auth.currentUser
                 if(currentUser != null){
+                    val userId = currentUser.uid
                     //Täytyy tehdä kuljettajan ja ajojärjestelijän erottelu
                     navController.navigate(route = Screens.OpenOrders.route)
                 }

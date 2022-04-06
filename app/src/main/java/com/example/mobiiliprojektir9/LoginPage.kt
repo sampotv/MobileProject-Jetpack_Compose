@@ -79,7 +79,7 @@ fun Login(navController: NavController, auth: FirebaseAuth) {
                             if (task.isSuccessful) {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d(TAG, "signInWithEmail:success")
-                                val user = auth.currentUser
+                                val user = auth.currentUser!!.uid
                                 if (user != null) {
                                     updateUI(user, navController)
                                 }
@@ -129,10 +129,10 @@ fun Login(navController: NavController, auth: FirebaseAuth) {
         }
     }
 
-private fun updateUI(user: FirebaseUser, navController: NavController) {
+private fun updateUI(userId: String, navController: NavController) {
     //erottelu, onko ajojärjestelijä vai ajaja?
-    //navController.navigate(route = Screens.CreateJobs.route)
     navController.navigate(route = Screens.OpenOrders.route)
+    //navController.navigate("${Screens.DriverSite.route}/${userId}")
 
 }
 
