@@ -11,17 +11,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobiiliprojektir9.ui.theme.MobiiliprojektiR9Theme
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 //import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-
 
 
 class MainActivity : ComponentActivity() {
 
 
-    lateinit var navController : NavHostController
+    lateinit var navController: NavHostController
 
     private lateinit var auth: FirebaseAuth
 
@@ -34,15 +36,33 @@ class MainActivity : ComponentActivity() {
         setContent {
             MobiiliprojektiR9Theme {
 
+                val currentUser = auth.currentUser
                 navController = rememberNavController()
                 SetUpNavigation(navController = navController, auth = auth)
 
                 //jos käyttäjä on kirjautuneena, ohjaa oikealle sivulle
-                val currentUser = auth.currentUser
-                if(currentUser != null){
+
+                if (currentUser != null) {
+
                     val userId = currentUser.uid
-                    //Täytyy tehdä kuljettajan ja ajojärjestelijän erottelu
-                    navController.navigate(route = Screens.OpenOrders.route)
+                    var db = FirebaseFirestore.getInstance()
+
+                    db.collection("drivers").whereEqualTo("driverId", userId)
+                        .limit(1).get()
+                        .addOnCompleteListener(OnCompleteListener<QuerySnapshot> { task ->
+                            if (task.isSuccessful) {
+                                val isEmpty = task.result.isEmpty
+                                if (isEmpty) {
+                                    //väliaikainen route, pitää olla järjestelijän etusivu
+                                    navController.navigate(route = Screens.RegisterAs.route)
+                                } else {
+
+                                    navController.navigate(route = Screens.OpenOrders.route)
+
+                                    //navController.navigate("${Screens.DriverSite.route}/${userId}")
+                                }
+                            }
+                        })
                 }
 
             }

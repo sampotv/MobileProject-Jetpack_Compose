@@ -24,8 +24,7 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun OpenDeliveries(
     orders: List<Order>,
-    navController: NavController,
-    auth: FirebaseAuth
+    navController: NavController
 ){
     Column(
         modifier = Modifier
@@ -35,7 +34,7 @@ fun OpenDeliveries(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ){
-        LogOut(auth = auth, navController = navController) //Uloskirjautumis nappi, saa ja pitää sijoittaa järkevämmin
+        LogOut(navController = navController) //Uloskirjautumis nappi, saa ja pitää sijoittaa järkevämmin
         Text(
             text = "Avoimet keikat",
             style = MaterialTheme.typography.h5
@@ -90,5 +89,5 @@ fun OpenDeliveryPreview(){
         Order("Osoite 1, 10010", "Osoite 2, 20020", "Joku tavara"),
         Order("Osoite 1, 10010", "Osoite 2, 20020", "Joku tavara")
     )
-    OpenDeliveries(orders, rememberNavController(), FirebaseAuth.getInstance())
+    OpenDeliveries(orders, rememberNavController())
 }

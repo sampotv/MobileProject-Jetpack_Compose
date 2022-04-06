@@ -21,9 +21,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobiiliprojektir9.ui.theme.MobiiliprojektiR9Theme
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
-import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
+
 
 @Composable
 fun Login(navController: NavController, auth: FirebaseAuth) {
@@ -130,8 +133,27 @@ fun Login(navController: NavController, auth: FirebaseAuth) {
     }
 
 private fun updateUI(userId: String, navController: NavController) {
-    //erottelu, onko ajojärjestelijä vai ajaja?
-    navController.navigate(route = Screens.OpenOrders.route)
+    //erottelu, onko ajojärjestelijä vai ajaja
+
+    var db = FirebaseFirestore.getInstance()
+
+    db.collection("drivers").whereEqualTo("driverId", userId)
+        .limit(1).get()
+        .addOnCompleteListener(OnCompleteListener<QuerySnapshot> { task ->
+            if (task.isSuccessful) {
+                val isEmpty = task.result.isEmpty
+                if(isEmpty)
+                {
+                    //väliaikainen route, pitää olla järjestelijän etusivu
+                    navController.navigate(route = Screens.RegisterAs.route)
+                }
+                else{
+
+                    navController.navigate(route = Screens.OpenOrders.route)
+                }
+            }
+        })
+
     //navController.navigate("${Screens.DriverSite.route}/${userId}")
 
 }

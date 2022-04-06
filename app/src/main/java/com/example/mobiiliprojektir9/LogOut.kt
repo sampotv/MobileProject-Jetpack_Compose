@@ -21,10 +21,11 @@ import com.google.firebase.ktx.Firebase
 //Kirjaudu ulos-nappi
 
 @Composable
-fun LogOut(navController: NavController, auth: FirebaseAuth){
+fun LogOut(navController: NavController){
 
+    val auth2 = FirebaseAuth.getInstance()
     Button(
-        onClick = {signOutUser(navController, auth)},
+        onClick = {signOutUser(navController, auth2)},
         //colors = ButtonDefaults.buttonColors(backgroundColor = Color.Yellow),
         contentPadding = PaddingValues(
             start = 20.dp,
@@ -51,5 +52,5 @@ fun signOutUser(navController: NavController, auth: FirebaseAuth){
 @Composable
 fun LogOutPreview(){
     
-    LogOut(auth = FirebaseAuth.getInstance(), navController = rememberNavController())
+    LogOut(navController = rememberNavController())
 }

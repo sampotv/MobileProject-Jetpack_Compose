@@ -45,7 +45,7 @@ fun SetUpNavigation(navController : NavHostController, auth: FirebaseAuth) {
             route = Screens.OpenOrders.route
         ){
             val orders : List<Order> = emptyList() //onko parempi tapa?
-            OpenDeliveries(orders = orders, navController = navController, auth = auth)
+            OpenDeliveries(orders = orders, navController = navController)
         }
         composable(
             route = Screens.DriverSite.route + "/{userId}",
