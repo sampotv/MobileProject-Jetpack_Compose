@@ -183,6 +183,7 @@ fun RegisterCoordinator(navController: NavController){
                         phoneNumErrorState = false
 
                         coordinatorRegister(
+                            navController,
                             context,
                             passwordState,
                             setPasswordErrorState = { passwordErrorState = it },
@@ -199,12 +200,20 @@ fun RegisterCoordinator(navController: NavController){
         }
 }
 
-fun saveCoordinatorData(coordinatorData: CoordinatorData, context: Context, user: FirebaseUser) {
+private fun saveCoordinatorData(coordinatorData: CoordinatorData,
+                                context: Context,
+                                user: FirebaseUser,
+                                navController: NavController) {
+    val userId = coordinatorData.coordinatorId
     val db = FirebaseFirestore.getInstance()
     db.collection("coordinator")
         .add(coordinatorData)
         .addOnSuccessListener { documentReference ->
-            Log.d(ControlsProviderService.TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+            Log.d(
+                "saveCoordinatorData",
+                "DocumentSnapshot added with ID: ${documentReference.id}"
+            )
+            navController.navigate("${Screens.CreateJob.route}/${userId}")
         }
         .addOnFailureListener { e ->
             Log.w(ControlsProviderService.TAG, "Error adding document", e)
@@ -217,7 +226,8 @@ fun saveCoordinatorData(coordinatorData: CoordinatorData, context: Context, user
         }
 }
 
-fun coordinatorRegister(
+private fun coordinatorRegister(
+    navController: NavController,
     context: Context,
     registerPassword: String,
     setPasswordErrorState: (Boolean) -> Unit,
@@ -243,7 +253,7 @@ fun coordinatorRegister(
                     phoneNum = registerPhoneNum
                     company = registerCompany
                 }
-                saveCoordinatorData(coordinatorData, context, user)
+                saveCoordinatorData(coordinatorData, context, user, navController)
             }
 
         } else {

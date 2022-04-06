@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.google.firebase.auth.FirebaseAuth
+import com.example.driverssite.DriverSite
 
 /*
 NAVIGAATION NÄYTETTÄVIEN SIVUJEN MÄÄRITYS
@@ -16,7 +16,7 @@ HUOM! Jotta navigaatio toimii, täytyy "sivu" olla composable funktio. Luokan ku
 
 @Composable
 fun SetUpNavigation(navController : NavHostController) {
-    NavHost(navController = navController, startDestination = "login_screen/{userId}")
+    NavHost(navController = navController, startDestination = "login_screen")
     {
         composable(
             route = Screens.Login.route
@@ -37,6 +37,16 @@ fun SetUpNavigation(navController : NavHostController) {
             route = Screens.RegisterOrganizer.route
         ){
             RegisterCoordinator(navController = navController)
+        }
+        composable(
+            route = Screens.DriverSite.route + "/{userId}",
+        ) { backStackEntry ->
+            DriverSite(navController = navController, backStackEntry.arguments?.getString("userId"))
+        }
+        composable(
+            route = Screens.CreateJob.route + "/{userId}",
+        ) { backStackEntry ->
+            CreateJob(navController = navController, backStackEntry.arguments?.getString("userId"))
         }
     }
 }

@@ -238,7 +238,10 @@ fun RegisterDriver(navController: NavController) {
     }
 }
 
-private fun saveDriverData(driverData: DriverData, context: Context, user: FirebaseUser, navController: NavController) {
+private fun saveDriverData(driverData: DriverData,
+                           context: Context,
+                           user: FirebaseUser,
+                           navController: NavController) {
     val db = FirebaseFirestore.getInstance()
     val userId = driverData.driverId
     db.collection("drivers")
@@ -248,6 +251,7 @@ private fun saveDriverData(driverData: DriverData, context: Context, user: Fireb
                 "saveDriverData",
                 "DocumentSnapshot added with ID: ${documentReference.id}"
             )
+            navController.navigate("${Screens.DriverSite.route}/${userId}")
         }
         .addOnFailureListener { e ->
             Log.w("SaveDriverData", "Error adding document", e)
