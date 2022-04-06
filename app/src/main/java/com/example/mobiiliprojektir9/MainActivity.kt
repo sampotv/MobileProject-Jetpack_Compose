@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.ktx.Firebase
 
 
+
 class MainActivity : ComponentActivity() {
 
 
@@ -27,6 +28,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         auth = FirebaseAuth.getInstance()
+
         super.onCreate(savedInstanceState)
 
         setContent {

@@ -6,6 +6,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.google.firebase.auth.FirebaseAuth
+import com.example.driverssite.DriverSite
+
 
 /*
 NAVIGAATION NÄYTETTÄVIEN SIVUJEN MÄÄRITYS
@@ -39,17 +41,21 @@ fun SetUpNavigation(navController : NavHostController, auth: FirebaseAuth) {
         ){
             RegisterCoordinator(navController = navController)
         }
-        composable(
+        /* composable(
             route = Screens.OpenOrders.route
         ){
             val orders : List<Order> = emptyList() //onko parempi tapa?
             OpenDeliveries(orders = orders, navController = navController, auth = auth)
-        }
-        /*composable(
-            route = Screens.CreateJobs.route
-        ){
-
-            CreateJobs(navController = navController)
         }*/
+        composable(
+            route = Screens.DriverSite.route + "/{userId}",
+        ) { backStackEntry ->
+            DriverSite(navController = navController, backStackEntry.arguments?.getString("userId"))
+        }
+        composable(
+            route = Screens.CreateJob.route + "/{userId}",
+        ) { backStackEntry ->
+            CreateJob(navController = navController, backStackEntry.arguments?.getString("userId"))
+        }
     }
 }
