@@ -221,6 +221,7 @@ fun RegisterDriver(navController: NavController) {
                     phoneNumErrorState = false
 
                     driverRegister(
+                        navController,
                         context,
                         passwordState,
                         setPasswordErrorState = {passwordErrorState = it},
@@ -237,8 +238,9 @@ fun RegisterDriver(navController: NavController) {
     }
 }
 
-fun saveDriverData(driverData: DriverData, context: Context, user: FirebaseUser) {
+private fun saveDriverData(driverData: DriverData, context: Context, user: FirebaseUser, navController: NavController) {
     val db = FirebaseFirestore.getInstance()
+    val userId = driverData.driverId
     db.collection("drivers")
         .add(driverData)
         .addOnSuccessListener { documentReference ->
@@ -260,7 +262,8 @@ fun saveDriverData(driverData: DriverData, context: Context, user: FirebaseUser)
 
 
 
-fun driverRegister(
+private fun driverRegister(
+    navController: NavController,
     context: Context,
     registerPassword: String,
     setPasswordErrorState: (Boolean) -> Unit,
@@ -286,7 +289,7 @@ fun driverRegister(
                     phoneNum = registerPhoneNum
                     company = registerCompany
                 }
-                saveDriverData(driverData, context, user)
+                saveDriverData(driverData, context, user, navController)
             }
 
         } else {

@@ -16,7 +16,7 @@ HUOM! Jotta navigaatio toimii, täytyy "sivu" olla composable funktio. Luokan ku
 
 @Composable
 fun SetUpNavigation(navController : NavHostController) {
-    NavHost(navController = navController, startDestination = "login_screen")
+    NavHost(navController = navController, startDestination = "login_screen/{userId}")
     {
         composable(
             route = Screens.Login.route
