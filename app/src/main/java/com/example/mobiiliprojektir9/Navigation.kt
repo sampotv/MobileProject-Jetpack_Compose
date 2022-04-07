@@ -42,10 +42,10 @@ fun SetUpNavigation(navController : NavHostController, auth: FirebaseAuth) {
             RegisterCoordinator(navController = navController)
         }
        composable(
-            route = Screens.OpenOrders.route
-        ){
-            val orders : List<Order> = emptyList() //onko parempi tapa?
-            OpenDeliveries(orders = orders, navController = navController, auth = auth)
+            route = Screens.OpenOrders.route + "/{userId}"
+        ){ backStackEntry ->
+            //val orders : List<Order> = emptyList() //onko parempi tapa?
+            OpenDeliveries(navController = navController, backStackEntry.arguments?.getString("userId"), auth = auth)
         }
         composable(
             route = Screens.DriverSite.route + "/{userId}",
