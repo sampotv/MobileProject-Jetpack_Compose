@@ -1,6 +1,6 @@
 package com.example.mobiiliprojektir9
 
-import android.graphics.drawable.shapes.OvalShape
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,12 +16,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.toObject
+import java.lang.IllegalStateException
 
 
 @Composable
 fun OpenDeliveries(
-    orders: List<Order>
+    navController: NavController,
+    userId: String?,
+    jobList: MutableList<Order> = getOpenOrders()
+//    openOrdersViewModel: OpenOrdersViewModel = viewModel(factory = OpenOrdersViewModelFactory(OpenOrdersRepo()))
 ){
+//    when(val jobsList = openOrdersViewModel.getOpenOrdersInfo().collectAsState(initial = null).value){
+//        is OnError ->{
+//            Text(text = "Yritä myöhemmin uudelleen")
+//        }
+//        is OnSuccess -> {
+//            val listOfJobs = jobsList.querySnapshot?.toObjects(Order::class.java)
+//        }
+//    }
     Column(
         modifier = Modifier
             .padding(24.dp)
@@ -40,47 +59,69 @@ fun OpenDeliveries(
                 .weight(1f)
                 .padding(start = 20.dp, end = 20.dp)
             ){
-            items(orders){order ->
+            items(jobList){job ->
                 OrderRow(
-                    order,
+                    job,
                     Modifier.fillParentMaxWidth()
-
                 )
             }
         }
     }
 }
 @Composable
-fun OrderRow(order: Order, modifier: Modifier){
+fun OrderRow(job: Order, modifier: Modifier){
     Column(
         modifier
             .padding(8.dp, top = 20.dp)
             .border(
                 border = BorderStroke(1.dp, Color.Black),
-                shape = RoundedCornerShape(8.dp)).padding(10.dp),
+                shape = RoundedCornerShape(8.dp))
+            .padding(10.dp),
     ){
         Column(
            modifier.padding(2.dp)
         ){
-            Text("Lähtöosoite: " + order.locationFrom)
-            Text("Kohdeosoite: " + order.locationTo)
-            Text("Sisältö: " + order.cargo)
+            Text("Lähtöosoite: " + job.locationFrom)
+            Text("Kohdeosoite: " + job.locationTo)
+            Text("Sisältö: " + job.content)
+            Text("Yritys: " + job.company)
+            Text("pvm: " + job.time_created)
         }
     }
 }
+fun getOpenOrders(): MutableList<Order>{
+    Log.d("function", "getOpenOrders")
+    var jobs =  mutableListOf<Order>()
+    val db = FirebaseFirestore.getInstance()
+    db.collection("Jobs")
+        .whereEqualTo("state", "open")
+        .get()
+        .addOnSuccessListener { documents ->
+            for (document in documents){
+                var order = document.toObject<Order>()
+                jobs.add(order)
+                Log.d("getOpenOrders ", "${document.id} => ${document.data}")
+                Log.d("order ", "$order")
+            }
+        }
+        .addOnFailureListener{ exception ->
+            Log.w("Failed, ", "Error getting document: ", exception)
+        }
+    Log.d("jobs ", "$jobs")
+    return jobs
+}
+
+//class OpenOrdersViewModelFactory(private val openOrdersRepo: OpenOrdersRepo): ViewModelProvider.Factory{
+//    override fun<T : ViewModel?> create(modelClass: Class<T>): T {
+//        if (modelClass.isAssignableFrom(OpenOrdersViewModel::class.java)){
+//            return OpenOrdersViewModel(openOrdersRepo) as T
+//        }
+//        throw IllegalStateException()
+//    }
+//}
 
 @Preview
 @Composable
 fun OpenDeliveryPreview(){
-    val orders = listOf(
-        Order("Osoite 1, 10010", "Osoite 2, 20020", "Joku tavara"),
-        Order("Osoite 1, 10010", "Osoite 2, 20020", "Joku tavara"),
-        Order("Osoite 1, 10010", "Osoite 2, 20020", "Joku tavara"),
-        Order("Osoite 1, 10010", "Osoite 2, 20020", "Joku tavara"),
-        Order("Osoite 1, 10010", "Osoite 2, 20020", "Joku tavara"),
-        Order("Osoite 1, 10010", "Osoite 2, 20020", "Joku tavara"),
-        Order("Osoite 1, 10010", "Osoite 2, 20020", "Joku tavara"),
-        Order("Osoite 1, 10010", "Osoite 2, 20020", "Joku tavara")
-    )
-    OpenDeliveries(orders)
+    OpenDeliveries(rememberNavController(), userId = String.toString())
 }

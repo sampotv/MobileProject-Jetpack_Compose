@@ -19,7 +19,6 @@ import androidx.navigation.compose.rememberNavController
 
 data class ListItem(val name: String)
 
-
 //class MainActivity : ComponentActivity() {
 //    override fun onCreate(savedInstanceState: Bundle?) {
 //        super.onCreate(savedInstanceState)
