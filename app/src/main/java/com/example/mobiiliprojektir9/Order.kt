@@ -6,8 +6,8 @@ import com.google.type.DateTime
 import java.util.*
 
 data class Order(
-    var locationFrom: String = "",
-    var locationTo: String = "",
+    var address_from: String = "",
+    var address_to: String = "",
     var content: String = "",
     var company: String = "",
     var driver_id: String = "",
