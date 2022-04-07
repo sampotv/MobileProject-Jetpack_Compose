@@ -23,6 +23,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
+import com.example.mobiiliprojektir9.ui.theme.LogOut
+import com.google.firebase.auth.FirebaseAuth
 import java.lang.IllegalStateException
 
 
@@ -30,7 +32,8 @@ import java.lang.IllegalStateException
 fun OpenDeliveries(
     navController: NavController,
     userId: String?,
-    jobList: MutableList<Order> = getOpenOrders()
+    jobList: MutableList<Order> = getOpenOrders(),
+    auth: FirebaseAuth
 //    openOrdersViewModel: OpenOrdersViewModel = viewModel(factory = OpenOrdersViewModelFactory(OpenOrdersRepo()))
 ){
 //    when(val jobsList = openOrdersViewModel.getOpenOrdersInfo().collectAsState(initial = null).value){
@@ -49,6 +52,7 @@ fun OpenDeliveries(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ){
+        LogOut(auth = auth, navController = navController) //Uloskirjautumis nappi, saa ja pitää sijoittaa järkevämmin
         Text(
             text = "Avoimet keikat",
             style = MaterialTheme.typography.h5
@@ -75,7 +79,8 @@ fun OrderRow(job: Order, modifier: Modifier){
             .padding(8.dp, top = 20.dp)
             .border(
                 border = BorderStroke(1.dp, Color.Black),
-                shape = RoundedCornerShape(8.dp))
+                shape = RoundedCornerShape(8.dp)
+            )
             .padding(10.dp),
     ){
         Column(
@@ -123,5 +128,5 @@ fun getOpenOrders(): MutableList<Order>{
 @Preview
 @Composable
 fun OpenDeliveryPreview(){
-    OpenDeliveries(rememberNavController(), userId = String.toString())
+    OpenDeliveries(rememberNavController(), userId = String.toString(), auth = FirebaseAuth.getInstance())
 }
