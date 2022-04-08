@@ -3,19 +3,15 @@ package com.example.mobiiliprojektir9
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.mobiiliprojektir9.ui.theme.MobiiliprojektiR9Theme
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 //import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-
 
 
 class MainActivity : ComponentActivity() {
@@ -34,17 +30,16 @@ class MainActivity : ComponentActivity() {
         setContent {
             MobiiliprojektiR9Theme {
 
-                navController = rememberNavController()
-                SetUpNavigation(navController = navController, auth = auth)
-
-                //jos käyttäjä on kirjautuneena, ohjaa oikealle sivulle
-                val currentUser = auth.currentUser
-                if(currentUser != null){
-                    val userId = currentUser.uid
-                    //Täytyy tehdä kuljettajan ja ajojärjestelijän erottelu
-                    navController.navigate(route = Screens.OpenOrders.route)
-                }
-
+//                navController = rememberNavController()
+//                SetUpNavigation(navController = navController, auth = auth)
+//
+//                //jos käyttäjä on kirjautuneena, ohjaa oikealle sivulle
+//                val currentUser = auth.currentUser
+//                if(currentUser != null){
+//                    val userId = currentUser.uid
+//                    //Täytyy tehdä kuljettajan ja ajojärjestelijän erottelu
+//                    navController.navigate(route = Screens.OpenOrders.route)
+//                }
             }
         }
     }
