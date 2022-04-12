@@ -12,24 +12,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.mobiiliprojektir9.ui.theme.MobiiliprojektiR9Theme
 
-class JobDelivered : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            MobiiliprojektiR9Theme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    Receipt()
-                }
-            }
-        }
-    }
-}
+
 @Composable
 fun Receipt() {
 
@@ -58,11 +44,17 @@ fun Receipt() {
 
     }
 }
-
+    /*
+    .update("state", "closed")
+    .update("time_delivered", timestamp)
+    .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully updated!") }
+    .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
+     */
 @Preview(showSystemUi = true)
 @Composable
 fun ReceiptPreview() {
     MobiiliprojektiR9Theme {
         Receipt()
+
     }
 }
