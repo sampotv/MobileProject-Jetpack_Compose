@@ -100,9 +100,7 @@ fun DisplayList(items: List<ListItem>, navController: NavController,userId: Stri
             }
         }
     }
-
 }
-
 
 @Preview(showBackground = true)
 @Composable

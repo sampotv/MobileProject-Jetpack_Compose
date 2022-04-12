@@ -36,7 +36,6 @@ fun CreateJob(navController: NavController, userId: String?) {
             color = Color.DarkGray
         )
 
-
         var text by remember { mutableStateOf(TextFieldValue("Mistä")) }
         TextField(
             value = text,
@@ -76,12 +75,8 @@ fun CreateJob(navController: NavController, userId: String?) {
         }) {
             Text(text = "View completed jobs")
         }
-
     }
-
 }
-
-
 
 @Preview(showBackground = true)
 @Composable

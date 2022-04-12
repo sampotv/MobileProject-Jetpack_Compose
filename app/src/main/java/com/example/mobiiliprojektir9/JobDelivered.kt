@@ -12,26 +12,33 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.mobiiliprojektir9.ui.theme.MobiiliprojektiR9Theme
+import com.google.firebase.auth.FirebaseAuth
 
-class JobDelivered : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            MobiiliprojektiR9Theme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    Receipt()
-                }
-            }
-        }
-    }
-}
+//class JobDelivered : ComponentActivity() {
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        setContent {
+//            MobiiliprojektiR9Theme {
+//                // A surface container using the 'background' color from the theme
+//                Surface(
+//                    modifier = Modifier.fillMaxSize(),
+//                    color = MaterialTheme.colors.background
+//                ) {
+//                    Receipt()
+//                }
+//            }
+//        }
+//    }
+//}
 @Composable
-fun Receipt() {
+fun Receipt(
+    navController: NavController,
+    userId: String?,
+    auth: FirebaseAuth
+) {
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -55,14 +62,14 @@ fun Receipt() {
         ) {
             Text("Kuittaa keikka ajetuksi",)
         }
-
     }
 }
+
 
 @Preview(showSystemUi = true)
 @Composable
 fun ReceiptPreview() {
     MobiiliprojektiR9Theme {
-        Receipt()
+        Receipt(rememberNavController(), userId = String.toString(), auth = FirebaseAuth.getInstance())
     }
 }
