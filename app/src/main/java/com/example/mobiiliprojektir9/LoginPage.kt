@@ -143,16 +143,12 @@ private fun updateUI(userId: String, navController: NavController) {
             if (task.isSuccessful) {
                 val isEmpty = task.result.isEmpty
                 if (isEmpty) {
-                    //väliaikaiset routet, pitää laittaa oikeat sivut
-                    navController.navigate(route = Screens.RegisterAs.route)
-                    //navController.navigate("${Screens.CreatJob.route}/${userId}")
+                    navController.navigate("${Screens.CreateJob.route}/${userId}")
                 } else {
-                    navController.navigate(route = Screens.OpenOrders.route)
-                    //navController.navigate("${Screens.DriverSite.route}/${userId}")
+                    navController.navigate("${Screens.DriverSite.route}/${userId}")
                 }
             }
         })
-
 }
 
 @Preview(showSystemUi = true)

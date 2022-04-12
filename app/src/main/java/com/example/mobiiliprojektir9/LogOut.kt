@@ -23,9 +23,9 @@ import com.google.firebase.ktx.Firebase
 @Composable
 fun LogOut(navController: NavController){
 
-    val auth2 = FirebaseAuth.getInstance()
+    val auth = FirebaseAuth.getInstance()
     Button(
-        onClick = {signOutUser(navController, auth2)},
+        onClick = {signOutUser(navController, auth)},
         //colors = ButtonDefaults.buttonColors(backgroundColor = Color.Yellow),
         contentPadding = PaddingValues(
             start = 20.dp,

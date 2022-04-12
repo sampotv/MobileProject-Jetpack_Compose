@@ -3,11 +3,11 @@ package com.example.mobiiliprojektir9
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobiiliprojektir9.ui.theme.MobiiliprojektiR9Theme
@@ -16,9 +16,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
-//import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 
+//import com.google.firebase.auth.ktx.auth
 
 class MainActivity : ComponentActivity() {
 
@@ -45,6 +44,7 @@ class MainActivity : ComponentActivity() {
                 if (currentUser != null) {
 
                     val userId = currentUser.uid
+
                     var db = FirebaseFirestore.getInstance()
 
                     db.collection("drivers").whereEqualTo("driverId", userId)
@@ -53,18 +53,17 @@ class MainActivity : ComponentActivity() {
                             if (task.isSuccessful) {
                                 val isEmpty = task.result.isEmpty
                                 if (isEmpty) {
-                                    //väliaikainen route, pitää olla järjestelijän etusivu
-                                    navController.navigate(route = Screens.RegisterAs.route)
+
+                                    navController.navigate("${Screens.CreateJob.route}/${userId}")
+
                                 } else {
 
-                                    navController.navigate(route = Screens.OpenOrders.route)
+                                    navController.navigate("${Screens.DriverSite.route}/${userId}")
 
-                                    //navController.navigate("${Screens.DriverSite.route}/${userId}")
                                 }
                             }
                         })
                 }
-
             }
         }
     }

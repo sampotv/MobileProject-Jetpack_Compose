@@ -42,20 +42,31 @@ fun SetUpNavigation(navController : NavHostController, auth: FirebaseAuth) {
             RegisterCoordinator(navController = navController)
         }
        composable(
-            route = Screens.OpenOrders.route
-        ){
-            val orders : List<Order> = emptyList() //onko parempi tapa?
-            OpenDeliveries(orders = orders, navController = navController)
+           route = Screens.OpenOrders.route + "/{userId}"
+        ){ backStackEntry ->
+            OpenDeliveries(
+                navController = navController,
+                backStackEntry.arguments?.getString("userId")
+            )
+
         }
         composable(
             route = Screens.DriverSite.route + "/{userId}",
         ) { backStackEntry ->
-            DriverSite(navController = navController, backStackEntry.arguments?.getString("userId"))
+            DriverSite(
+                navController = navController,
+                backStackEntry.arguments?.getString("userId"),
+                auth = auth)
         }
         composable(
             route = Screens.CreateJob.route + "/{userId}",
         ) { backStackEntry ->
             CreateJob(navController = navController, backStackEntry.arguments?.getString("userId"))
         }
+        /*composable(
+            route = Screens.ClosedOrders.route + "/{userId}",
+        ) { backStackEntry ->
+            ClosedDeliveries(navController = navController, backStackEntry.arguments?.getString("userId"))
+        }*/
     }
 }

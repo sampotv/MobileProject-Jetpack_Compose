@@ -244,6 +244,7 @@ private fun saveDriverData(driverData: DriverData,
                            navController: NavController) {
     val db = FirebaseFirestore.getInstance()
     val userId = driverData.driverId
+    val company = driverData.company
     db.collection("drivers")
         .add(driverData)
         .addOnSuccessListener { documentReference ->
