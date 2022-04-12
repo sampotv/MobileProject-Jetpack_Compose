@@ -1,5 +1,7 @@
 package com.example.mobiiliprojektir9
 
+
+
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -30,16 +32,17 @@ import com.example.mobiiliprojektir9.ui.theme.LogOut
 import com.example.mobiiliprojektir9.ui.theme.MobiiliprojektiR9Theme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import java.text.SimpleDateFormat
 import java.util.*
 
 
 @Composable
-fun ClosedDeliveries(
+fun ClosedDeliveriesCompany(
     navController: NavController,
-    userId: String?,
-    jobs: MutableList<Order> = getClosedOrders(),
+    coordinatorId: String?,
+    jobs: MutableList<Order> = getClosedOrdersCompany(company=String()),
     auth: FirebaseAuth
 ){
     Column(
@@ -63,7 +66,7 @@ fun ClosedDeliveries(
                 .clickable {  }
         ){
             items(jobs){job ->
-                ClosedOrderRow(
+                ClosedOrderCompanyRow(
                     job,
                     Modifier.fillParentMaxWidth()
                 )
@@ -72,7 +75,7 @@ fun ClosedDeliveries(
     }
 }
 @Composable
-fun ClosedOrderRow(job: Order, modifier: Modifier){
+fun ClosedOrderCompanyRow(job: Order, modifier: Modifier){
     Column(
         modifier
             .padding(8.dp, top = 20.dp)
@@ -89,23 +92,44 @@ fun ClosedOrderRow(job: Order, modifier: Modifier){
             Text("Kohdeosoite: " + job.address_to)
             Text("Sisältö: " + job.content)
             Text("Yritys: " + job.company)
-            Text("Luotu: " + job.time_created?.toDate()?.getStringTimeStampWithDate2())
-            Text("Ajettu: " + job.time_delivered?.toDate()?.getStringTimeStampWithDate2())
+            Text("Luotu: " + job.time_created?.toDate()?.getStringTimeStampWithDate3())
+            Text("Ajettu: " + job.time_delivered?.toDate()?.getStringTimeStampWithDate3())
         }
     }
 }
 
-fun Date.getStringTimeStampWithDate2(): String {
+fun Date.getStringTimeStampWithDate3(): String {
     val dateFormat = SimpleDateFormat("dd-MM-yyyy'T'HH:mm:ss'Z'", Locale.getDefault())
     return dateFormat.format(this)
 }
 
-fun getClosedOrders(): MutableList<Order>{
+fun getCompany(coordinatorId: String?) {
+    val db = FirebaseFirestore.getInstance()
+    var coordinatorId = "e1rne4WYcTWL0LBgVqfrW7CxyE72"
+    db.collection("coordinator")
+        .whereEqualTo("coordinatorId", coordinatorId)
+        .get()
+        .addOnSuccessListener { documents ->
+            for(document in documents){
+                val data = document.toObject<CoordinatorData>()
+                val company = data.company
+                Log.d("getCompany Success", company)
+
+            }
+        }
+        .addOnFailureListener{ exception ->
+            Log.w("Failed, ", "Error getting document: ", exception)
+        }
+}
+
+fun getClosedOrdersCompany(company: String): MutableList<Order>{
     Log.d("function", "getOpenOrders")
     var jobs =  mutableStateListOf<Order>()
     val db = FirebaseFirestore.getInstance()
     db.collection("Jobs")
+        .whereEqualTo("company", company)
         .whereEqualTo("state", "closed")
+        .orderBy("time_delivered", Query.Direction.ASCENDING)
         .get()
         .addOnSuccessListener { documents ->
             for (document in documents){
@@ -126,6 +150,6 @@ fun getClosedOrders(): MutableList<Order>{
 
 @Preview
 @Composable
-fun ClosedDeliveryPreview(){
-    ClosedDeliveries(rememberNavController(), userId = String.toString(), auth = FirebaseAuth.getInstance())
+fun ClosedDeliveryCompanyPreview(){
+    ClosedDeliveriesCompany(rememberNavController(), coordinatorId = String.toString(), auth = FirebaseAuth.getInstance())
 }
