@@ -33,6 +33,7 @@ import com.google.firebase.auth.FirebaseAuth
 //        }
 //    }
 //}
+
 @Composable
 fun Receipt(
     navController: NavController,
@@ -64,7 +65,12 @@ fun Receipt(
         }
     }
 }
-
+    /*
+    .update("state", "closed")
+    .update("time_delivered", timestamp)
+    .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully updated!") }
+    .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
+     */
 
 @Preview(showSystemUi = true)
 @Composable
