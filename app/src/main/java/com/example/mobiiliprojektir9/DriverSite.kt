@@ -6,10 +6,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,8 +43,9 @@ data class ListItem(val name: String)
 
 @Composable
 fun DriverSite(navController: NavController, userId: String?, auth: FirebaseAuth){
+    val userIdTest = "YJ16ji7asQaR7SBpbGJoMRZymys2"
 
-    DisplayList(items = listItems,navController,userId)
+    DisplayList(items = listItems,navController,userIdTest)
 }
 
 @Composable
@@ -86,22 +90,47 @@ private val listItems: List<ListItem> = listOf(
 
 @Composable
 fun DisplayList(items: List<ListItem>, navController: NavController,userId: String?) {
-    Log.d("DriverSite", "$userId")
-    //tilapäinen nappi testaukseen
-    Column(){
-        Row(modifier = Modifier.padding(20.dp)){
-            Button(onClick = { navController.navigate("${Screens.OpenOrders.route}/${userId}") }) {
-                Text(text = "Avoimet keikat")
-            }
-        }
-        LazyColumn(modifier = Modifier.fillMaxSize(1F)) {
+    Log.d("DisplayList", "$userId")
+    Column(verticalArrangement = Arrangement.SpaceEvenly,
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally){
+        LazyColumn(modifier = Modifier
+            .padding(top = 20.dp, bottom = 500.dp)
+            .height(300.dp)) {
             items(items) { item ->
                 ListItem(item)
-            }
-        }
+            } }
+        OpenJobs(navController, userId)
     }
 }
+@Composable
+fun OpenJobs(navController: NavController, userId: String?){
+    Log.d("OpenJobs", "$userId")
+    Column(modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally){
 
+        Button(onClick = { navController.navigate("${Screens.OpenOrders.route}/${userId}") }, colors = ButtonDefaults.textButtonColors(
+            backgroundColor = Color.Blue
+        ), modifier = Modifier
+            .height(60.dp)
+            .padding(bottom = 20.dp)) {
+
+            Text("View open jobs", color = White)
+
+        }
+
+        Button(onClick = { navController.navigate(route = Screens.JobHistory.route)}, colors = ButtonDefaults.textButtonColors(
+            backgroundColor = Color.Blue
+        ), modifier = Modifier
+            .padding(bottom = 20.dp)
+            .height(60.dp)) {
+
+            Text("View completed jobs", color = White)
+
+        }
+
+    }
+}
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {

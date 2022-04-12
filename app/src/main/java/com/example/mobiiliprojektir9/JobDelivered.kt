@@ -48,7 +48,7 @@ fun Receipt(
     )
     {
         Spacer(modifier = Modifier.padding(20.dp))
-        Text(text = "Keikan kuittaus", fontSize = 20.sp)
+        Text(text = "Keikan kuittaus, $userId", fontSize = 20.sp)
         TabRowDefaults.Divider(color = Color.Black, thickness = 5.dp)
         Spacer(modifier = Modifier.padding(80.dp))
         Button(

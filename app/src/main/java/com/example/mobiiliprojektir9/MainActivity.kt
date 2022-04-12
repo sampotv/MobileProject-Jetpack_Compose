@@ -40,6 +40,7 @@ class MainActivity : ComponentActivity() {
                     val userId = currentUser.uid
                     //Täytyy tehdä kuljettajan ja ajojärjestelijän erottelu
                    // navController.navigate(route = Screens.OpenOrders.route)
+                    navController.navigate(route = Screens.DriverSite.route +"/${userId}")
                 }
             }
         }
