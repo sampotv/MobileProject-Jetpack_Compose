@@ -6,6 +6,7 @@ import com.google.type.DateTime
 import java.util.*
 
 data class Order(
+    var order_id: String = "",
     var address_from: String = "",
     var address_to: String = "",
     var content: String = "",
