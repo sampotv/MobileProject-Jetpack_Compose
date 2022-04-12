@@ -131,8 +131,8 @@ fun Login(navController: NavController, auth: FirebaseAuth) {
 
 private fun updateUI(userId: String, navController: NavController) {
     //erottelu, onko ajojärjestelijä vai ajaja?
-    navController.navigate(route = Screens.OpenOrders.route)
-    //navController.navigate("${Screens.DriverSite.route}/${userId}")
+    //navController.navigate(route = Screens.OpenOrders.route)
+    navController.navigate("${Screens.DriverSite.route}/${userId}")
 
 }
 

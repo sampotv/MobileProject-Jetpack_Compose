@@ -1,22 +1,14 @@
 package com.example.mobiiliprojektir9
 
-import android.app.AlertDialog
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.Context
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.Icons.Filled
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
@@ -24,19 +16,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.state
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Bottom
-import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.colorspace.Illuminant.A
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.ui.material.*
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.unaryPlus
 import androidx.navigation.NavController
@@ -53,22 +40,29 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-
-
 @Composable
 fun OpenDeliveries(
     navController: NavController,
     userId: String?,
-    jobs: MutableList<Order> = getOpenOrders(),
+//    db: FirebaseFirestore = FirebaseFirestore.getInstance(),
+//    company: String? = getCompany(userId, db),
+//    jobs: MutableList<Order> = getOpenOrders(company, db),
     auth: FirebaseAuth
 ){
     var userIdTest = "YJ16ji7asQaR7SBpbGJoMRZymys2"//testausta varten otettu driveId tietokannasta
+    Log.d("openDeliveries", "$userId")
+    //val companyTest = "yritys1"
+    val db = FirebaseFirestore.getInstance()
+    //val company = "Kuljetusyritys"
+    var jobs: MutableList<Order>
+    var companyState by remember { mutableStateOf("")}
     var dialogState by remember { mutableStateOf(false)}
     var isJobSelected by remember { mutableStateOf(false)}
     var selectedId by remember { mutableStateOf("")}
     var selectedItem by remember {mutableStateOf( Order())}
     val context = LocalContext.current
-    
+
+
     Scaffold(
         topBar = { TopAppBar(
             elevation = 4.dp,
@@ -79,9 +73,7 @@ fun OpenDeliveries(
                 }
             },
             actions = {
-                TextButton(onClick = { /*TODO*/ }) {
-                    Text(text = "Kirjaudu ulos", color = Color.White)
-                }
+                LogOut(navController, auth)
             }
         )},
         content = {
@@ -93,12 +85,8 @@ fun OpenDeliveries(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top
             ){
-                // LogOut(auth = auth, navController = navController) //Uloskirjautumis nappi, saa ja pitää sijoittaa järkevämmin
-//        Text(
-//            text = "Avoimet keikat",
-//            style = MaterialTheme.typography.h5
-//        )
-//        Spacer(modifier = Modifier.width(24.dp))
+                getCompany(userId, db, setCompanyState = {companyState = it})
+                jobs  = getOpenOrders(companyState, db)
                 val listState = rememberLazyListState()
                 LazyColumn(
                     state = listState,
@@ -136,8 +124,6 @@ fun OpenDeliveries(
             }
         }
     )
-
-
 }
 
 fun reserveJob(selectedId: String, userId: String?, context: Context) {
@@ -182,6 +168,50 @@ fun OrderRow(job: Order, modifier: Modifier){
     }
 }
 
+fun getCompany(userId: String?, db: FirebaseFirestore, setCompanyState: (String) -> Unit) {
+    //Log.d("function", "getCompany $userId")
+    db.collection("drivers").whereEqualTo("driverId", userId)
+        .get()
+        .addOnSuccessListener { documents ->
+            for(document in documents){
+                val data = document.toObject<DriverData>()
+                val company = data.company
+                Log.d("getCompany Success", company)
+                setCompanyState(company)
+            }
+        }
+        .addOnFailureListener{ exception ->
+            Log.w("Failed, ", "Error getting document: ", exception)
+        }
+}
+
+fun getOpenOrders(company: String, db: FirebaseFirestore): MutableList<Order>{
+    Log.d("function", "getOpenOrders")
+    Log.d("company", company)
+    var jobs = mutableStateListOf<Order>()
+
+    db.collection("Jobs")
+        .whereEqualTo("state", "open")
+        .whereEqualTo("company", company)
+        .orderBy("time_created", Query.Direction.ASCENDING)
+        .get()
+        .addOnSuccessListener { documents ->
+            for (document in documents){
+                val order = document.toObject<Order>()
+                val time = order.time_created?.toDate()
+                order.order_id = document.id
+                jobs.add(order)
+                Log.d("getOpenOrders ", "${document.id} => ${document.data}")
+                Log.d("order time ", "$time")
+                //Log.d("order time ", "$formattedDate")
+            }
+        }
+        .addOnFailureListener{ exception ->
+            Log.w("Failed, ", "Error getting document: ", exception)
+        }
+    Log.d("jobs ", "$jobs")
+    return jobs
+}
 @Composable
 private fun CustomAlertDialog(
     selectedItem: Order,
@@ -276,53 +306,6 @@ fun Date.getStringTimeStampWithDate(): String {
     val dateFormat = SimpleDateFormat("dd-MM-yyyy'T'HH:mm:ss'Z'", Locale.getDefault())
     return dateFormat.format(this)
 }
-
-fun getOpenOrders(): MutableList<Order>{
-    Log.d("function", "getOpenOrders")
-    val jobs = mutableStateListOf<Order>()
-    val db = FirebaseFirestore.getInstance()
-    db.collection("Jobs")
-        .whereEqualTo("state", "open")
-        .orderBy("time_created", Query.Direction.ASCENDING)
-        .get()
-        .addOnSuccessListener { documents ->
-            for (document in documents){
-                var order = document.toObject<Order>()
-                val time = order.time_created?.toDate()
-                order.order_id = document.id
-                jobs.add(order)
-                Log.d("getOpenOrders ", "${document.id} => ${document.data}")
-                Log.d("order time ", "$time")
-                //Log.d("order time ", "$formattedDate")
-            }
-        }
-        .addOnFailureListener{ exception ->
-            Log.w("Failed, ", "Error getting document: ", exception)
-        }
-//    db.collection("Jobs").addSnapshotListener(snapshot, e ->
-//        if(e != null){
-//            Log.w("snapshotListener", "Listen failed", e)
-//            return@addSnapshotListener
-//        }
-//        if(snapshot != null && snapshot.exists()){
-//            Log.d("tag", "Current data: ${snapshot.data}")
-//        } else {
-//            Log.d("tag", "Current data: null")
-//        }
-//    )
-
-    Log.d("jobs ", "$jobs")
-    return jobs
-}
-
-//class OpenOrdersViewModelFactory(private val openOrdersRepo: OpenOrdersRepo): ViewModelProvider.Factory{
-//    override fun<T : ViewModel?> create(modelClass: Class<T>): T {
-//        if (modelClass.isAssignableFrom(OpenOrdersViewModel::class.java)){
-//            return OpenOrdersViewModel(openOrdersRepo) as T
-//        }
-//        throw IllegalStateException()
-//    }
-//}
 
 @Preview
 @Composable

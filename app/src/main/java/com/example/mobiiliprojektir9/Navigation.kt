@@ -45,12 +45,18 @@ fun SetUpNavigation(navController : NavHostController, auth: FirebaseAuth) {
             route = Screens.OpenOrders.route + "/{userId}"
         ){ backStackEntry ->
             //val orders : List<Order> = emptyList() //onko parempi tapa?
-            OpenDeliveries(navController = navController, backStackEntry.arguments?.getString("userId"), auth = auth)
+            OpenDeliveries(
+                navController = navController,
+                backStackEntry.arguments?.getString("userId"),
+                auth = auth)
         }
         composable(
             route = Screens.DriverSite.route + "/{userId}",
         ) { backStackEntry ->
-            DriverSite(navController = navController, backStackEntry.arguments?.getString("userId"))
+            DriverSite(
+                navController = navController,
+                backStackEntry.arguments?.getString("userId"),
+                auth = auth)
         }
         composable(
             route = Screens.CreateJob.route + "/{userId}",

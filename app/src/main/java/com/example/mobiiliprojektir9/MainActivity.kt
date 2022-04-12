@@ -9,6 +9,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.mobiiliprojektir9.ui.theme.MobiiliprojektiR9Theme
 import com.google.firebase.auth.FirebaseAuth
 //import com.google.firebase.auth.ktx.auth
@@ -30,16 +31,16 @@ class MainActivity : ComponentActivity() {
         setContent {
             MobiiliprojektiR9Theme {
 
-//                navController = rememberNavController()
-//                SetUpNavigation(navController = navController, auth = auth)
-//
-//                //jos käyttäjä on kirjautuneena, ohjaa oikealle sivulle
-//                val currentUser = auth.currentUser
-//                if(currentUser != null){
-//                    val userId = currentUser.uid
-//                    //Täytyy tehdä kuljettajan ja ajojärjestelijän erottelu
-//                    navController.navigate(route = Screens.OpenOrders.route)
-//                }
+                navController = rememberNavController()
+                SetUpNavigation(navController = navController, auth = auth)
+
+                //jos käyttäjä on kirjautuneena, ohjaa oikealle sivulle
+                val currentUser = auth.currentUser
+                if(currentUser != null){
+                    val userId = currentUser.uid
+                    //Täytyy tehdä kuljettajan ja ajojärjestelijän erottelu
+                   // navController.navigate(route = Screens.OpenOrders.route)
+                }
             }
         }
     }
