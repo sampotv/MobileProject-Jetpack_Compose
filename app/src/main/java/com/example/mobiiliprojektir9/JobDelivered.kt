@@ -48,10 +48,15 @@ fun Receipt(
     selectedItem: String?,
     auth: FirebaseAuth
 ) {
-
-    var jobInfo by remember { mutableStateOf(Order())}
-    val userId = jobInfo.driver_id
     val db = FirebaseFirestore.getInstance()
+    var jobInfo by remember { mutableStateOf(Order())}
+    getJobInfo(selectedItem, setJobInfo = {
+        if (it != null) {
+            jobInfo = it
+        }
+    }, db )
+    val userId = jobInfo.driver_id
+
     Scaffold(
         topBar = {TopAppBar(
             elevation = 4.dp,
@@ -74,14 +79,20 @@ fun Receipt(
             )
             {
                 Spacer(modifier = Modifier.padding(20.dp))
-                Text(text = "Keikan kuittaus", fontSize = 20.sp)
+                Text(text = "Keikan kuittaus", fontSize = 30.sp)
                 TabRowDefaults.Divider(color = Color.Black, thickness = 5.dp)
-                getJobInfo(selectedItem, setJobInfo = {
-                    if (it != null) {
-                        jobInfo = it
-                    }
-                }, db )
-                Spacer(modifier = Modifier.padding(80.dp))
+                Spacer(modifier = Modifier.padding(30.dp))
+                Column(
+                    modifier = Modifier
+                        .padding(2.dp)
+                ){
+                    Text("Lähtöosoite: " + jobInfo.address_from, fontSize = 20.sp)
+                    Text("Kohdeosoite: " + jobInfo.address_to, fontSize = 20.sp)
+                    Text("Sisältö: " + jobInfo.content, fontSize = 20.sp)
+                    Text("Yritys: " + jobInfo.company, fontSize = 20.sp)
+                    Text("pvm: " + jobInfo.time_created?.toDate()?.getStringTimeStampWithDate(), fontSize = 20.sp)
+                }
+                Spacer(modifier = Modifier.padding(20.dp))
                 Button(
                     onClick = { /*TODO*/ },
                     modifier = Modifier.size(220.dp, 80.dp)
@@ -114,10 +125,7 @@ fun getJobInfo(selectedItem: String?, setJobInfo: (Order?) -> Unit, db: Firebase
             }
     }
 }
-//private fun Date.getStringTimeStampWithDate(): String {
-//    val dateFormat = SimpleDateFormat("dd-MM-yyyy'T'HH:mm:ss'Z'", Locale.getDefault())
-//    return dateFormat.format(this)
-//}
+
     /*
     .update("state", "closed")
     .update("time_delivered", timestamp)

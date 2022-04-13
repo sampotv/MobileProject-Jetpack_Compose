@@ -181,7 +181,6 @@ fun DisplayList(items: MutableList<Order>, navController: NavController, userId:
                 }
             }
         })
-
 }
 @Composable
 fun ItemRow(item: Order, modifier: Modifier){
@@ -202,7 +201,7 @@ fun ItemRow(item: Order, modifier: Modifier){
             Text("Kohdeosoite: " + item.address_to)
             Text("Sisältö: " + item.content)
             Text("Yritys: " + item.company)
-            Text("pvm: " + item.time_created?.toDate()?.getStringTimeStampWithDate())
+            Text("Luotu: " + item.time_created?.toDate()?.getStringTimeStampWithDate())
         }
     }
 }
