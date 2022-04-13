@@ -40,7 +40,6 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 @Composable
 fun OpenDeliveries(
     navController: NavController,
