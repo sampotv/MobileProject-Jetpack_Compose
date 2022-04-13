@@ -1,46 +1,30 @@
 package com.example.mobiiliprojektir9
 
-import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import android.os.Bundle
 import android.service.controls.ControlsProviderService.TAG
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.mobiiliprojektir9.ui.theme.MobiiliprojektiR9Theme
-import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
-import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.launch
-
 
 
 //class RegisterDriver : ComponentActivity() {
@@ -88,6 +72,7 @@ fun RegisterDriver(navController: NavController) {
     var phoneNumState by rememberSaveable {
         mutableStateOf("")
     }
+
     Column(
         modifier = Modifier
             .padding(24.dp)
@@ -294,7 +279,12 @@ private fun driverRegister(
                     phoneNum = registerPhoneNum
                     company = registerCompany
                 }
-                saveDriverData(driverData, context, user, navController)
+                saveDriverData(
+                    driverData,
+                    context,
+                    user,
+                    navController
+                )
             }
 
         } else {

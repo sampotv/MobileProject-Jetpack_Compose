@@ -10,9 +10,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
@@ -30,8 +30,10 @@ import com.example.mobiiliprojektir9.Order
 import com.example.mobiiliprojektir9.OrderRow
 import com.example.mobiiliprojektir9.Screens
 import com.example.mobiiliprojektir9.getStringTimeStampWithDate
+import com.example.mobiiliprojektir9.ui.theme.LogOut
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import java.text.SimpleDateFormat
 import java.util.*
@@ -55,9 +57,9 @@ data class ListItem(val name: String)
 
 @Composable
 fun DriverSite(navController: NavController, userId: String?, auth: FirebaseAuth){
-    val userIdTest = "YJ16ji7asQaR7SBpbGJoMRZymys2"
-    val items = getListItems(userIdTest)
-    DisplayList(items, navController, userIdTest)
+//    val userIdTest = "PPQH4E4bLIfORaMH9p30GkEQlQs2"
+    val items = getListItems(userId)
+    DisplayList(items, navController, userId, auth)
 }
 
 @Composable
@@ -92,6 +94,7 @@ private fun getListItems(userId: String?): MutableList<Order>{
     db.collection("Jobs")
         .whereEqualTo("driver_id", userId)
         .whereEqualTo("state", "reserved")
+        .orderBy("time_created", Query.Direction.ASCENDING)
         .get()
         .addOnSuccessListener { documents ->
             for (document in documents){
@@ -112,56 +115,73 @@ private fun getListItems(userId: String?): MutableList<Order>{
 }
 
 @Composable
-fun DisplayList(items: MutableList<Order>, navController: NavController, userId: String?) {
-    var selectedItem by remember { mutableStateOf( Order()) }
+fun DisplayList(items: MutableList<Order>, navController: NavController, userId: String?, auth: FirebaseAuth) {
     var selectedId by remember { mutableStateOf("")}
     Log.d("DisplayList", "$userId")
-    Column(verticalArrangement = Arrangement.SpaceEvenly,
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally){
+    
+    Scaffold(
+        topBar = { TopAppBar(
+            elevation = 4.dp,
+            title = {Text(text = "Avoimet keikat")},
+            navigationIcon = {
+                IconButton(onClick = { navController.navigate("${Screens.DriverSite.route}/${userId}") }) {
+                    Icon(Icons.Filled.ArrowBack, null, tint = White)
+                }
+            },
+            actions = {
+                LogOut(navController, auth)
+            }
+        )
+        },
+        content = {
+            Column(verticalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally){
 
-        LazyColumn(modifier = Modifier
-            .padding(top = 20.dp, bottom = 50.dp)
-            .height(350.dp)) {
-            items(items.size){index ->
-                Row(
-                    modifier = Modifier
-                        .clickable (onClick = {
-                            selectedId = items[index].order_id
-                            navController.navigate("${Screens.JobDelivered.route}/${selectedId}")
-                        })
-                ){
-                    ItemRow(
-                        items[index],
-                        Modifier.fillParentMaxWidth()
-                    )
+                LazyColumn(modifier = Modifier
+                    .padding(top = 20.dp, bottom = 50.dp)
+                    .height(350.dp)) {
+                    items(items.size){index ->
+                        Row(
+                            modifier = Modifier
+                                .clickable (onClick = {
+                                    selectedId = items[index].order_id
+                                    navController.navigate("${Screens.JobDelivered.route}/${selectedId}")
+                                })
+                        ){
+                            ItemRow(
+                                items[index],
+                                Modifier.fillParentMaxWidth()
+                            )
+                        }
+                    }
+                }
+                //OpenJobs(navController, userId)
+                Column(modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally){
+                    Button(onClick = { navController.navigate("${Screens.OpenOrders.route}/${userId}") }, colors = ButtonDefaults.textButtonColors(
+                        backgroundColor = Color.Blue
+                    ), modifier = Modifier
+                        .height(80.dp)
+                        .width(200.dp)
+                        .padding(bottom = 20.dp)) {
+
+                        Text("View open jobs", color = White)
+                    }
+
+                    Button(onClick = { navController.navigate("${Screens.JobHistory.route}/${userId}")}, colors = ButtonDefaults.textButtonColors(
+                        backgroundColor = Color.Blue
+                    ), modifier = Modifier
+                        .padding(bottom = 20.dp)
+                        .width(200.dp)
+                        .height(80.dp)) {
+
+                        Text("View completed jobs", color = White)
+                    }
                 }
             }
-        }
-        //OpenJobs(navController, userId)
-        Column(modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally){
-            Button(onClick = { navController.navigate("${Screens.OpenOrders.route}/${userId}") }, colors = ButtonDefaults.textButtonColors(
-                backgroundColor = Color.Blue
-            ), modifier = Modifier
-                .height(80.dp)
-                .width(200.dp)
-                .padding(bottom = 20.dp)) {
+        })
 
-                Text("View open jobs", color = White)
-            }
-
-            Button(onClick = { navController.navigate("${Screens.JobHistory.route}/${userId}")}, colors = ButtonDefaults.textButtonColors(
-                backgroundColor = Color.Blue
-            ), modifier = Modifier
-                .padding(bottom = 20.dp)
-                .width(200.dp)
-                .height(80.dp)) {
-
-                Text("View completed jobs", color = White)
-            }
-        }
-    }
 }
 @Composable
 fun ItemRow(item: Order, modifier: Modifier){

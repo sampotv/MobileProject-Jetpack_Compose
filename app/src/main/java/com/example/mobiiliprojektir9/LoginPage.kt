@@ -21,9 +21,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobiiliprojektir9.ui.theme.MobiiliprojektiR9Theme
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
-import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
+
 
 @Composable
 fun Login(navController: NavController, auth: FirebaseAuth) {
@@ -32,52 +35,57 @@ fun Login(navController: NavController, auth: FirebaseAuth) {
     var passwordVisibility by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    )
+    {
+        Spacer(modifier = Modifier.padding(20.dp))
+        Text(text = "Kirjaudu sisään", fontSize = 20.sp)
+        Spacer(modifier = Modifier.padding(5.dp))
+        TextField(
+            value = email,
+            onValueChange = { email = it },
+            placeholder = { Text("Email") },
+            modifier = Modifier
+                .width(300.dp)
+                .wrapContentHeight(align = Alignment.CenterVertically),
+            maxLines = 1
         )
-        {
-            Spacer(modifier = Modifier.padding(20.dp))
-            Text(text = "Kirjaudu sisään", fontSize = 20.sp)
-            Spacer(modifier = Modifier.padding(5.dp))
-            TextField(
-                value = email,
-                onValueChange = { email = it },
-                placeholder = { Text("Email") },
-                modifier = Modifier
-                    .width(300.dp)
-                    .wrapContentHeight(align = Alignment.CenterVertically),
-                maxLines = 1
-            )
 
-            TextField(value = password,
-                onValueChange = { password = it },
-                placeholder = { Text("Salasana") },
-                modifier = Modifier
-                    .width(300.dp)
-                    .wrapContentHeight(align = Alignment.CenterVertically),
-                maxLines = 1,
-                visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                trailingIcon = {
-                    IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
+        TextField(value = password,
+            onValueChange = { password = it },
+            placeholder = { Text("Salasana") },
+            modifier = Modifier
+                .width(300.dp)
+                .wrapContentHeight(align = Alignment.CenterVertically),
+            maxLines = 1,
+            visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            trailingIcon = {
+                IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
 
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_visibility),
-                            contentDescription = "visibility"
-                        )
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_visibility),
+                        contentDescription = "visibility"
+                    )
 
-                    }
                 }
-            )
-            Spacer(modifier = Modifier.padding(20.dp))
-            Button(
-                onClick = {
+            }
+        )
+        Spacer(modifier = Modifier.padding(20.dp))
+        Button(
+            onClick = {
+                if (email.isEmpty() || password.isEmpty()) {
+                    Toast.makeText(
+                        context, "Syötä sähköposti ja salasana.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                } else {
                     auth.signInWithEmailAndPassword(email.trim(), password.trim())
                         .addOnCompleteListener() { task ->
                             if (task.isSuccessful) {
-                                // Sign in success, update UI with the signed-in user's information
                                 Log.d(TAG, "signInWithEmail:success")
                                 val user = auth.currentUser!!.uid
                                 if (user != null) {
@@ -110,29 +118,37 @@ fun Login(navController: NavController, auth: FirebaseAuth) {
                                 }
                             }
                         }
-                },
-                modifier = Modifier.size(220.dp, 50.dp)
-            ) {
-                Text("Kirjaudu kuljettajana")
-            }
-            Button(
-                onClick = { /*TODO*/ },
-                modifier = Modifier.size(220.dp, 50.dp)
-            ) {
-                Text("Kirjaudu ajojärjästelijänä")
-            }
-            Spacer(modifier = Modifier.padding(50.dp))
-            Text("Uusi käyttäjä? Rekisteröidy täältä!")
-            Button(onClick = { navController.navigate(route = Screens.RegisterAs.route) }) {
-                Text("Rekisteröidy")
-            }
+                }
+            },
+            modifier = Modifier.size(220.dp, 50.dp)
+        ) {
+            Text("Kirjaudu sisään")
+        }
+        Spacer(modifier = Modifier.padding(50.dp))
+        Text("Uusi käyttäjä? Rekisteröidy täältä!")
+        Button(onClick = { navController.navigate(route = Screens.RegisterAs.route) }) {
+            Text("Rekisteröidy")
         }
     }
+}
 
 private fun updateUI(userId: String, navController: NavController) {
-    //erottelu, onko ajojärjestelijä vai ajaja?
-    //navController.navigate(route = Screens.OpenOrders.route)
-    navController.navigate("${Screens.DriverSite.route}/${userId}")
+    //erottelu, onko ajojärjestelijä vai ajaja
+
+    var db = FirebaseFirestore.getInstance()
+
+    db.collection("drivers").whereEqualTo("driverId", userId)
+        .limit(1).get()
+        .addOnCompleteListener(OnCompleteListener<QuerySnapshot> { task ->
+            if (task.isSuccessful) {
+                val isEmpty = task.result.isEmpty
+                if (isEmpty) {
+                    navController.navigate("${Screens.CreateJob.route}/${userId}")
+                } else {
+                    navController.navigate("${Screens.DriverSite.route}/${userId}")
+                }
+            }
+        })
 }
 
 @Preview(showSystemUi = true)
