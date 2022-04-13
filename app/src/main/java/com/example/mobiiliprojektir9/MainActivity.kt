@@ -17,7 +17,6 @@ import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : ComponentActivity() {
 
-
     lateinit var navController : NavHostController
 
     private lateinit var auth: FirebaseAuth

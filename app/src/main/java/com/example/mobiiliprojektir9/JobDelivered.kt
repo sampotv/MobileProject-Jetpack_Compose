@@ -1,11 +1,12 @@
 package com.example.mobiiliprojektir9
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,6 +17,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobiiliprojektir9.ui.theme.MobiiliprojektiR9Theme
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.toObject
+import java.text.SimpleDateFormat
+import java.util.*
 
 //class JobDelivered : ComponentActivity() {
 //    override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,9 +42,11 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun Receipt(
     navController: NavController,
-    userId: String?,
+    selectedItem: String?,
     auth: FirebaseAuth
 ) {
+    var jobInfo by remember { mutableStateOf(Order())}
+    val db = FirebaseFirestore.getInstance()
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -48,8 +55,13 @@ fun Receipt(
     )
     {
         Spacer(modifier = Modifier.padding(20.dp))
-        Text(text = "Keikan kuittaus, $userId", fontSize = 20.sp)
+        Text(text = "Keikan kuittaus", fontSize = 20.sp)
         TabRowDefaults.Divider(color = Color.Black, thickness = 5.dp)
+        getJobInfo(selectedItem, setJobInfo = {
+            if (it != null) {
+                jobInfo = it
+            }
+        }, db )
         Spacer(modifier = Modifier.padding(80.dp))
         Button(
             onClick = { /*TODO*/ },
@@ -65,6 +77,25 @@ fun Receipt(
         }
     }
 }
+fun getJobInfo(selectedItem: String?, setJobInfo: (Order?) -> Unit, db: FirebaseFirestore){
+    if (selectedItem != null) {
+        db.collection("Jobs").document(selectedItem)
+            .get()
+            .addOnSuccessListener { document ->
+                var job = document.toObject<Order>()
+                job?.order_id = selectedItem
+                setJobInfo(job)
+                Log.d("getJobInfo", "$job")
+            }
+            .addOnFailureListener{ e ->
+                Log.d("Failed", "Failed with ", e)
+            }
+    }
+}
+//private fun Date.getStringTimeStampWithDate(): String {
+//    val dateFormat = SimpleDateFormat("dd-MM-yyyy'T'HH:mm:ss'Z'", Locale.getDefault())
+//    return dateFormat.format(this)
+//}
     /*
     .update("state", "closed")
     .update("time_delivered", timestamp)
@@ -75,7 +106,6 @@ fun Receipt(
 @Preview(showSystemUi = true)
 @Composable
 fun ReceiptPreview() {
-    MobiiliprojektiR9Theme {
-        Receipt(rememberNavController(), userId = String.toString(), auth = FirebaseAuth.getInstance())
-    }
+        Receipt(rememberNavController(), selectedItem = String.toString(), auth = FirebaseAuth.getInstance())
+
 }

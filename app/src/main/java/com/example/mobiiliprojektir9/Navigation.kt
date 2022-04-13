@@ -64,9 +64,9 @@ fun SetUpNavigation(navController : NavHostController, auth: FirebaseAuth) {
             CreateJob(navController = navController, backStackEntry.arguments?.getString("userId"))
         }
         composable(
-            route = Screens.JobDelivered.route + "/{userId}",
+            route = Screens.JobDelivered.route + "/{selectedItem}",
         ) { backStackEntry ->
-            Receipt(navController = navController, backStackEntry.arguments?.getString("userId"), auth = auth)
+            Receipt(navController = navController, backStackEntry.arguments?.getString("selectedItem"), auth = auth)
         }
         composable(
             route = Screens.JobHistory.route + "/{userId}",
