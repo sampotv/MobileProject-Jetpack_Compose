@@ -125,7 +125,7 @@ fun RegisterDriver(navController: NavController) {
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(8.dp),
             maxLines = 1,
-            label = { Text("Salasana") },
+            label = { Text("Salasana väh. 6 merkkiä") },
             visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 IconButton(onClick = {

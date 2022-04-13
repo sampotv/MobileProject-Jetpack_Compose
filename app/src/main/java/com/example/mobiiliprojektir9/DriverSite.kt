@@ -122,12 +122,7 @@ fun DisplayList(items: MutableList<Order>, navController: NavController, userId:
     Scaffold(
         topBar = { TopAppBar(
             elevation = 4.dp,
-            title = {Text(text = "Avoimet keikat")},
-            navigationIcon = {
-                IconButton(onClick = { navController.navigate("${Screens.DriverSite.route}/${userId}") }) {
-                    Icon(Icons.Filled.ArrowBack, null, tint = White)
-                }
-            },
+            title = {Text(text = "Omat keikat")},
             actions = {
                 LogOut(navController, auth)
             }
@@ -162,8 +157,9 @@ fun DisplayList(items: MutableList<Order>, navController: NavController, userId:
                     Button(onClick = { navController.navigate("${Screens.OpenOrders.route}/${userId}") }, colors = ButtonDefaults.textButtonColors(
                         backgroundColor = Color.Blue
                     ), modifier = Modifier
-                        .height(80.dp)
-                        .width(200.dp)
+                        .size(220.dp, 80.dp)
+//                        .height(80.dp)
+//                        .width(200.dp)
                         .padding(bottom = 20.dp)) {
 
                         Text("View open jobs", color = White)
@@ -172,8 +168,9 @@ fun DisplayList(items: MutableList<Order>, navController: NavController, userId:
                     Button(onClick = { navController.navigate("${Screens.JobHistory.route}/${userId}")}, colors = ButtonDefaults.textButtonColors(
                         backgroundColor = Color.Blue
                     ), modifier = Modifier
-                        .padding(bottom = 20.dp)
-                        .width(200.dp)
+                        .size(220.dp, 80.dp)
+//                        .padding(bottom = 20.dp)
+//                        .width(200.dp)
                         .height(80.dp)) {
 
                         Text("View completed jobs", color = White)
