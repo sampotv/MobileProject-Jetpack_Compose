@@ -124,7 +124,7 @@ fun DisplayList(items: MutableList<Order>, navController: NavController, userId:
             elevation = 4.dp,
             title = {Text(text = "Omat keikat")},
             actions = {
-                LogOut(navController, auth)
+                LogOut(navController)
             }
         )
         },

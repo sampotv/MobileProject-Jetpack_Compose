@@ -67,7 +67,7 @@ fun Receipt(
                 }
             },
             actions = {
-                LogOut(navController, auth)
+                LogOut(navController)
             }
         )
         },
