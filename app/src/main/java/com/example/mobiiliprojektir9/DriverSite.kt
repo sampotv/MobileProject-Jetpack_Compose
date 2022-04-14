@@ -157,9 +157,8 @@ fun DisplayList(items: MutableList<Order>, navController: NavController, userId:
                     Button(onClick = { navController.navigate("${Screens.OpenOrders.route}/${userId}") }, colors = ButtonDefaults.textButtonColors(
                         backgroundColor = Color.Blue
                     ), modifier = Modifier
-                        .size(220.dp, 80.dp)
-//                        .height(80.dp)
-//                        .width(200.dp)
+                        .height(80.dp)
+                        .width(200.dp)
                         .padding(bottom = 20.dp)) {
 
                         Text("View open jobs", color = White)
@@ -168,9 +167,8 @@ fun DisplayList(items: MutableList<Order>, navController: NavController, userId:
                     Button(onClick = { navController.navigate("${Screens.JobHistory.route}/${userId}")}, colors = ButtonDefaults.textButtonColors(
                         backgroundColor = Color.Blue
                     ), modifier = Modifier
-                        .size(220.dp, 80.dp)
-//                        .padding(bottom = 20.dp)
-//                        .width(200.dp)
+                        .padding(bottom = 20.dp)
+                        .width(200.dp)
                         .height(80.dp)) {
 
                         Text("View completed jobs", color = White)
