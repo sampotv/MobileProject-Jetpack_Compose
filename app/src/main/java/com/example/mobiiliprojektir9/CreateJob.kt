@@ -153,7 +153,12 @@ fun CreateJob(navController: NavController, userId: String?) {
                                         Toast.LENGTH_LONG
                                     ).show()
                                 }
-                                .addOnFailureListener { e -> Log.w("Keikka", "fail", e) }
+                                .addOnFailureListener {
+                                    Toast.makeText(
+                                        context, "Keikan lisääminen epäonnistui",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
                         }
                     },
                     modifier = Modifier

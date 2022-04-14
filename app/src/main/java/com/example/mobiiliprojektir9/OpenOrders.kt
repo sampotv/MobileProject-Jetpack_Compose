@@ -111,7 +111,7 @@ fun OpenDeliveries(
                     if(isJobSelected){
                         Log.d("Job selected", selectedId)
                         isJobSelected = false
-                        reserveJob(selectedId, userIdTest, context)
+                        reserveJob(selectedId, userId, context)
                     }
                 }
                 CustomAlertDialog(
@@ -167,7 +167,7 @@ fun OrderRow(job: Order, modifier: Modifier){
     }
 }
 
-fun getCompany(userId: String?, db: FirebaseFirestore, setCompanyState: (String) -> Unit) {
+private fun getCompany(userId: String?, db: FirebaseFirestore, setCompanyState: (String) -> Unit) {
     //Log.d("function", "getCompany $userId")
     db.collection("drivers").whereEqualTo("driverId", userId)
         .get()
@@ -184,7 +184,7 @@ fun getCompany(userId: String?, db: FirebaseFirestore, setCompanyState: (String)
         }
 }
 
-fun getOpenOrders(company: String, db: FirebaseFirestore): MutableList<Order>{
+private fun getOpenOrders(company: String, db: FirebaseFirestore): MutableList<Order>{
     Log.d("function", "getOpenOrders")
     Log.d("company", company)
     var jobs = mutableStateListOf<Order>()
