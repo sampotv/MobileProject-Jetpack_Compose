@@ -1,8 +1,9 @@
 package com.example.mobiiliprojektir9
 
+import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.Context
+//import androidx.compose.Context
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -25,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
-import androidx.compose.unaryPlus
+//import androidx.compose.unaryPlus
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.firestore.FirebaseFirestore
@@ -39,7 +40,6 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 @Composable
 fun OpenDeliveries(
     navController: NavController,
@@ -47,7 +47,6 @@ fun OpenDeliveries(
 //    db: FirebaseFirestore = FirebaseFirestore.getInstance(),
 //    company: String? = getCompany(userId, db),
 //    jobs: MutableList<Order> = getOpenOrders(company, db),
-    auth: FirebaseAuth
 ){
     var userIdTest = "YJ16ji7asQaR7SBpbGJoMRZymys2"//testausta varten otettu driveId tietokannasta
     Log.d("openDeliveries", "$userId")
@@ -73,7 +72,7 @@ fun OpenDeliveries(
                 }
             },
             actions = {
-                LogOut(navController, auth)
+                LogOut(navController)
             }
         )},
         content = {
@@ -133,7 +132,7 @@ fun reserveJob(selectedId: String, userId: String?, context: Context) {
     // state-kenttään "open" tilalle "reserved"
     db.collection("Jobs").document(selectedId)
         .update("driver_id", userId,
-               "state", "reserved")
+            "state", "reserved")
         .addOnSuccessListener {
             Log.d("tag", "update successful!")
             Toast.makeText(context, "Keikka varattu", Toast.LENGTH_SHORT).show()
@@ -311,7 +310,6 @@ fun Date.getStringTimeStampWithDate(): String {
 @Composable
 fun OpenDeliveryPreview(){
     OpenDeliveries(rememberNavController(),
-        userId = String.toString(),
-        auth = FirebaseAuth.getInstance())
+        userId = String.toString())
 
 }
