@@ -2,4 +2,7 @@
     <string name="app_name">MobiiliprojektiR9</string>
     <string name="title_activity_login_page">LoginPage</string>
     <string name="title_activity_register_as_page">RegisterAsPage</string>
+    <string name="icn_camera_view_switch_camera_content_description">1</string>
+    <string name="icn_camera_view_camera_shutter_content_description">2</string>
+    <string name="icn_camera_view_view_gallery_content_description">3</string>
 </resources>

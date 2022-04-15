@@ -14,6 +14,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -116,7 +117,7 @@ private fun getListItems(userId: String?): MutableList<Order>{
 
 @Composable
 fun DisplayList(items: MutableList<Order>, navController: NavController, userId: String?, auth: FirebaseAuth) {
-    var selectedId by remember { mutableStateOf("")}
+    var selectedId by rememberSaveable { mutableStateOf("")}
     Log.d("DisplayList", "$userId")
     
     Scaffold(
@@ -157,9 +158,8 @@ fun DisplayList(items: MutableList<Order>, navController: NavController, userId:
                     Button(onClick = { navController.navigate("${Screens.OpenOrders.route}/${userId}") }, colors = ButtonDefaults.textButtonColors(
                         backgroundColor = Color.Blue
                     ), modifier = Modifier
-                        .size(220.dp, 80.dp)
-//                        .height(80.dp)
-//                        .width(200.dp)
+                        .height(80.dp)
+                        .width(200.dp)
                         .padding(bottom = 20.dp)) {
 
                         Text("View open jobs", color = White)
@@ -168,9 +168,8 @@ fun DisplayList(items: MutableList<Order>, navController: NavController, userId:
                     Button(onClick = { navController.navigate("${Screens.JobHistory.route}/${userId}")}, colors = ButtonDefaults.textButtonColors(
                         backgroundColor = Color.Blue
                     ), modifier = Modifier
-                        .size(220.dp, 80.dp)
-//                        .padding(bottom = 20.dp)
-//                        .width(200.dp)
+                        .padding(bottom = 20.dp)
+                        .width(200.dp)
                         .height(80.dp)) {
 
                         Text("View completed jobs", color = White)
