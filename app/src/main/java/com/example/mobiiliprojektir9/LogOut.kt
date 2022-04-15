@@ -21,7 +21,8 @@ import com.google.firebase.ktx.Firebase
 //Kirjaudu ulos-nappi
 
 @Composable
-fun LogOut(navController: NavController, auth: FirebaseAuth){
+fun LogOut(navController: NavController){
+    val auth = FirebaseAuth.getInstance()
 
     Button(
         onClick = {signOutUser(navController, auth)},
@@ -51,5 +52,5 @@ fun signOutUser(navController: NavController, auth: FirebaseAuth){
 @Composable
 fun LogOutPreview(){
     
-    LogOut(auth = FirebaseAuth.getInstance(), navController = rememberNavController())
+    LogOut(navController = rememberNavController())
 }

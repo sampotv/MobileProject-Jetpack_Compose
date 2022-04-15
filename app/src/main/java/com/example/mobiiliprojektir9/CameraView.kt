@@ -37,6 +37,7 @@ import androidx.core.net.toFile
 import java.io.File
 import java.nio.file.Files.createFile
 import java.text.SimpleDateFormat
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -57,7 +58,9 @@ fun CameraView(
         ActivityResultContracts.GetContent()
     ){
         uri: Uri? ->
-        if(uri != null) onImageCaptured(uri, true)
+        if(uri != null){
+            onImageCaptured(uri, true)
+        }
     }
     CameraPreviewView(
         imageCapture,
@@ -105,6 +108,7 @@ private fun CameraPreviewView(
         .build()
 
     val previewView = remember { PreviewView(context) }
+
     LaunchedEffect(lensFacing) {
         val cameraProvider = context.getCameraProvider()
         cameraProvider.unbindAll()

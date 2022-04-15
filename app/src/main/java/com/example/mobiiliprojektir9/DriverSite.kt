@@ -14,6 +14,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -116,7 +117,7 @@ private fun getListItems(userId: String?): MutableList<Order>{
 
 @Composable
 fun DisplayList(items: MutableList<Order>, navController: NavController, userId: String?, auth: FirebaseAuth) {
-    var selectedId by remember { mutableStateOf("")}
+    var selectedId by rememberSaveable { mutableStateOf("")}
     Log.d("DisplayList", "$userId")
     
     Scaffold(
@@ -124,7 +125,7 @@ fun DisplayList(items: MutableList<Order>, navController: NavController, userId:
             elevation = 4.dp,
             title = {Text(text = "Omat keikat")},
             actions = {
-                LogOut(navController, auth)
+                LogOut(navController)
             }
         )
         },

@@ -73,7 +73,7 @@ fun OpenDeliveries(
                 }
             },
             actions = {
-                LogOut(navController, auth)
+                LogOut(navController)
             }
         )},
         content = {
