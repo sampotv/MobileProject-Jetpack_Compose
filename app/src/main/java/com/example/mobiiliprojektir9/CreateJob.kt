@@ -1,82 +1,205 @@
 package com.example.mobiiliprojektir9
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.Button
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.driverssite.DriverSite
+import com.example.mobiiliprojektir9.ui.theme.LogOut
+import com.google.firebase.firestore.FirebaseFirestore
+
+@Composable
+fun FetchUserData(userId: String, db: FirebaseFirestore): String {
+
+    var company by remember { mutableStateOf("") }
+    val userRef = db.collection("coordinator").whereEqualTo("coordinatorId", userId)
+    userRef.get()
+        .addOnSuccessListener { documents ->
+            for (document in documents) {
+
+                val companyData = document.get("company") as String
+                if (companyData.isNotEmpty()) {
+                    company = companyData
+                }
+            }
+        }
+        .addOnFailureListener { exception ->
+            Log.d("Failure", "get failed with ", exception)
+        }
+
+    return company
+}
 
 @Composable
 fun CreateJob(navController: NavController, userId: String?) {
 
-    Column(modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceEvenly)
+    val context = LocalContext.current
+    val scroll = rememberScrollState(0)
+    var db = FirebaseFirestore.getInstance()
+    var yritys = FetchUserData(userId!!, db)
+    var mista by rememberSaveable { mutableStateOf("") } //ei tallenna statea jonkun takia ?
+    var mihin by rememberSaveable { mutableStateOf("") }
+    var selite by rememberSaveable { mutableStateOf("") }
 
-    {
-        Text("Create a new job",
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.background(Color.White),
-            color = Color.DarkGray
-        )
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                elevation = 4.dp,
+                title = { Text(text = "Keikat") },
+                navigationIcon = {
+                    IconButton(onClick = { /* hamburger menu käyttäjälle tai keikoile emt mby*/ }) {
+                        Icon(Icons.Filled.Menu, "menu", tint = Color.White)
+                    }
+                },
+                actions = {
+                    LogOut(navController)
+                }
+            )
+        },
+        content = {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceEvenly
+            )
 
-        var text by remember { mutableStateOf(TextFieldValue("Mistä")) }
-        TextField(
-            value = text,
-            onValueChange = { newText ->
-                text = newText
+            {
+                Text(
+                    "Luo uusi keikka",
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    fontSize = 20.sp,
+                    modifier = Modifier.background(Color.White),
+                    color = Color.DarkGray
+                )
+
+                TextField(
+                    value = mista,
+                    placeholder = { Text("Hakuosoite") },
+                    onValueChange = {
+                        mista = it
+                    },
+                    modifier = Modifier
+                        .width(300.dp)
+                        .wrapContentHeight(align = Alignment.CenterVertically),
+                    maxLines = 1
+                )
+
+                TextField(
+                    value = mihin,
+                    placeholder = { Text("Vientiosoite") },
+                    onValueChange = {
+                        mihin = it
+                    },
+                    modifier = Modifier
+                        .width(300.dp)
+                        .wrapContentHeight(align = Alignment.CenterVertically),
+                    maxLines = 1
+                )
+
+                TextField(
+                    value = selite,
+                    placeholder = { Text("Selite") },
+                    onValueChange = {
+                        selite = it
+                    },
+                    modifier = Modifier
+                        .height(80.dp)
+                        .width(300.dp)
+                        .verticalScroll(scroll)
+                )
+
+                Button(
+                    onClick = {
+
+                        var createJobData = CreateJobData().apply {
+                            address_from = mista
+                            address_to = mihin
+                            company = yritys
+                            content = selite
+                            driver_id = ""
+                            state = "open"
+                            time_created = java.sql.Timestamp(System.currentTimeMillis())
+                        }
+
+                        if (selite.isEmpty() || mista.isEmpty() || mihin.isEmpty()) {
+                            Toast.makeText(
+                                context, "Täytä kaikki kentät.",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        } else {
+                            db.collection("Jobs")
+                                .add(createJobData)
+                                .addOnSuccessListener {
+                                    Toast.makeText(
+                                        context, "Keikan lisääminen onnistui!",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(
+                                        context, "Keikan lisääminen epäonnistui",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                        }
+                    },
+                    modifier = Modifier
+                        .width(140.dp)
+                        .height(50.dp)
+                ) {
+                    Text(text = "Luo uusi keikka", textAlign = TextAlign.Center)
+                }
+                Spacer(Modifier.height(30.0.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.Bottom,
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Button(
+                        onClick = {
+                            //your onclick code here
+                        },
+                        modifier = Modifier
+                            .width(140.dp)
+                            .height(50.dp)
+                    ) {
+                        Text(text = "Avoimet keikat", textAlign = TextAlign.Center)
+                    }
+                    Button(
+                        onClick = {
+                            //your onclick code here
+                        },
+                        modifier = Modifier
+                            .width(140.dp)
+                            .height(50.dp)
+                    ) {
+                        Text(text = "Kuitatut keikat", textAlign = TextAlign.Center)
+                    }
+                }
             }
-        )
-
-        var text2 by remember { mutableStateOf(TextFieldValue("Mihin")) }
-        TextField(
-            value = text2,
-            onValueChange = { newText ->
-                text2 = newText
-            }
-        )
-
-        var text3 by remember { mutableStateOf(TextFieldValue("Mitä")) }
-        TextField(
-            value = text3,
-            onValueChange = { newText ->
-                text3 = newText
-            }
-        )
-
-        Button(onClick = {
-            //your onclick code here
-        }, modifier = Modifier.width(140.dp)) {
-            Text(text = "Create Job")
         }
-        Button(onClick = {
-            //your onclick code here
-        }) {
-            Text(text = "View open jobs")
-        }
-        Button(onClick = {
-            //your onclick code here
-        }) {
-            Text(text = "View completed jobs")
-        }
-    }
+    )
+
 }
+
 
 @Preview(showBackground = true)
 @Composable

@@ -32,7 +32,7 @@ import com.google.firebase.firestore.QuerySnapshot
 fun Login(navController: NavController, auth: FirebaseAuth) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
-    var passwordVisibility by remember { mutableStateOf(false) }
+    var passwordVisibility by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
 
     Column(
