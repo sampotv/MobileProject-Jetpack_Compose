@@ -1,5 +1,6 @@
 package com.example.mobiiliprojektir9
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -24,6 +25,9 @@ fun SetUpNavigation(navController : NavHostController, auth: FirebaseAuth) {
         composable(
             route = Screens.Login.route
         ){
+            BackHandler(false) {
+
+            }
             Login(navController = navController, auth = auth)
         }
         composable(
@@ -57,11 +61,18 @@ fun SetUpNavigation(navController : NavHostController, auth: FirebaseAuth) {
                 navController = navController,
                 backStackEntry.arguments?.getString("userId"),
                 auth = auth)
+            BackHandler(true) {
+                // Or do nothing
+            }
         }
         composable(
             route = Screens.CreateJob.route + "/{userId}",
-        ) { backStackEntry ->
+        )
+        { backStackEntry ->
             CreateJob(navController = navController, backStackEntry.arguments?.getString("userId"))
+            BackHandler(true) {
+                // Or do nothing
+            }
         }
         composable(
             route = Screens.JobDelivered.route + "/{selectedItem}",
@@ -72,6 +83,11 @@ fun SetUpNavigation(navController : NavHostController, auth: FirebaseAuth) {
             route = Screens.JobHistory.route + "/{userId}",
         ) { backStackEntry ->
             ClosedDeliveries(navController = navController, backStackEntry.arguments?.getString("userId"), auth = auth)
+        }
+        composable(
+            route = Screens.JobHistoryCompany.route + "/{userId}",
+        ) { backStackEntry ->
+            ClosedDeliveriesCompany(navController = navController, coordinatorId  = backStackEntry.arguments?.getString("userId"))
         }
         /*composable(
             route = Screens.ClosedOrders.route + "/{userId}",
