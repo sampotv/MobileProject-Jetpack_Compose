@@ -185,7 +185,7 @@ fun CreateJob(navController: NavController, userId: String?) {
                     }
                     Button(
                         onClick = {
-                            //your onclick code here
+                            navController.navigate("${Screens.JobHistoryCompany.route}/${userId}")
                         },
                         modifier = Modifier
                             .width(140.dp)

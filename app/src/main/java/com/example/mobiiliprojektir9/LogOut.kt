@@ -46,7 +46,10 @@ fun LogOut(navController: NavController){
 
 fun signOutUser(navController: NavController, auth: FirebaseAuth){
     auth.signOut()
-    navController.navigate(route = Screens.Login.route)
+    navController.navigate(route = Screens.Login.route){
+        popUpTo(0) //poistaa viimeisemmän composablen pois muistista,
+                      // takaisin nappi sulkee apin kirjautumis-näkymästä eikä palaa uloskirjautumista edeltävään näkymään
+    }
 }
 @Preview(showSystemUi = true)
 @Composable
