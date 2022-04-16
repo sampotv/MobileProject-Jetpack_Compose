@@ -61,7 +61,7 @@ fun SetUpNavigation(navController : NavHostController, auth: FirebaseAuth) {
         composable(
             route = Screens.CreateJob.route + "/{userId}",
         ) { backStackEntry ->
-            CreateJob(navController = navController, backStackEntry.arguments?.getString("userId"))
+            CreateJob(navController = navController, backStackEntry.arguments?.getString("userId"), auth = auth)
         }
         composable(
             route = Screens.JobDelivered.route + "/{selectedItem}",
@@ -72,6 +72,11 @@ fun SetUpNavigation(navController : NavHostController, auth: FirebaseAuth) {
             route = Screens.JobHistory.route + "/{userId}",
         ) { backStackEntry ->
             ClosedDeliveries(navController = navController, backStackEntry.arguments?.getString("userId"), auth = auth)
+        }
+        composable(
+            route = Screens.JobHistoryCompany.route + "/{userId}",
+        ) { backStackEntry ->
+            ClosedDeliveriesCompany(navController = navController, backStackEntry.arguments?.getString("userId"), auth = auth)
         }
         /*composable(
             route = Screens.ClosedOrders.route + "/{userId}",

@@ -20,16 +20,17 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.driverssite.DriverSite
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun CreateJob(navController: NavController, userId: String?) {
+fun CreateJob(navController: NavController, userId: String?, auth: FirebaseAuth) {
 
     Column(modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly)
 
     {
-        Text("Create a new job",
+        Text("Luo uusi keikka",
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
             modifier = Modifier.background(Color.White),
@@ -63,17 +64,17 @@ fun CreateJob(navController: NavController, userId: String?) {
         Button(onClick = {
             //your onclick code here
         }, modifier = Modifier.width(140.dp)) {
-            Text(text = "Create Job")
+            Text(text = "Luo keikka")
         }
         Button(onClick = {
-            //your onclick code here
+            navController.navigate("${Screens.OpenOrders.route}/${userId}")
         }) {
-            Text(text = "View open jobs")
+            Text(text = "Näytä avoimet keikat")
         }
         Button(onClick = {
-            //your onclick code here
+            navController.navigate("${Screens.JobHistoryCompany.route}/${userId}")
         }) {
-            Text(text = "View completed jobs")
+            Text(text = "Näytä valmiit keikat")
         }
     }
 }
@@ -82,6 +83,6 @@ fun CreateJob(navController: NavController, userId: String?) {
 @Composable
 fun CreateJobPreview() {
     CreateJob(
-        rememberNavController(), userId = String.toString()
+        rememberNavController(), userId = String.toString(), auth = FirebaseAuth.getInstance()
     )
 }

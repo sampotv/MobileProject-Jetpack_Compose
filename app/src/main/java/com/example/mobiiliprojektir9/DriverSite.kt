@@ -162,7 +162,7 @@ fun DisplayList(items: MutableList<Order>, navController: NavController, userId:
 //                        .width(200.dp)
                         .padding(bottom = 20.dp)) {
 
-                        Text("View open jobs", color = White)
+                        Text("Näytä avoimet keikat", color = White)
                     }
 
                     Button(onClick = { navController.navigate("${Screens.JobHistory.route}/${userId}")}, colors = ButtonDefaults.textButtonColors(
@@ -173,7 +173,7 @@ fun DisplayList(items: MutableList<Order>, navController: NavController, userId:
 //                        .width(200.dp)
                         .height(80.dp)) {
 
-                        Text("View completed jobs", color = White)
+                        Text("Näytä valmiit keikat", color = White)
                     }
                 }
             }
@@ -216,7 +216,7 @@ fun OpenJobs(navController: NavController, userId: String?){
             .width(200.dp)
             .padding(bottom = 20.dp)) {
 
-            Text("View open jobs", color = White)
+            Text("Näytä avoimet keikat", color = White)
 
         }
 
@@ -227,7 +227,7 @@ fun OpenJobs(navController: NavController, userId: String?){
             .width(200.dp)
             .height(100.dp)) {
 
-            Text("View completed jobs", color = White)
+            Text("Näytä valmiit keikat", color = White)
 
         }
 
