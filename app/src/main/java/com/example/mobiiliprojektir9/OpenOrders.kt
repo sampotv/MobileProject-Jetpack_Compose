@@ -238,14 +238,17 @@ private fun CustomAlertDialog(
                         fontSize = 24.sp,
                         color = Color.Blue
                     )
-                    Spacer(modifier = Modifier.padding(vertical = 12.dp))
+                    Spacer(modifier = Modifier.padding(vertical = 10.dp))
+                    Column(
+                        modifier = Modifier.padding(start = 20.dp, end = 5.dp)
+                    ){
+                        Text("Lähtöosoite: " + selectedItem.address_from, color = Color.White)
+                        Text("Kohdeosoite: " + selectedItem.address_to, color = Color.White)
+                        Text("Sisältö: " + selectedItem.content, color = Color.White)
+                        Text("Yritys: " + selectedItem.company, color = Color.White)
+                        Text("pvm: " + selectedItem.time_created?.toDate()?.getStringTimeStampWithDate(), color = Color.White)
 
-                    Text("Lähtöosoite: " + selectedItem.address_from, color = Color.White)
-                    Text("Kohdeosoite: " + selectedItem.address_to, color = Color.White)
-                    Text("Sisältö: " + selectedItem.content, color = Color.White)
-                    Text("Yritys: " + selectedItem.company, color = Color.White)
-                    Text("pvm: " + selectedItem.time_created?.toDate()?.getStringTimeStampWithDate(), color = Color.White)
-
+                    }
                     Spacer(modifier = Modifier.padding(vertical = 10.dp))
 
                     Text(
