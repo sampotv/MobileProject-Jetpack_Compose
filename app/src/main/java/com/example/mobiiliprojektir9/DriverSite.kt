@@ -136,7 +136,7 @@ fun DisplayList(items: MutableList<Order>, navController: NavController, userId:
 
                 LazyColumn(modifier = Modifier
                     .padding(top = 20.dp, bottom = 50.dp)
-                    .height(350.dp)) {
+                    .weight(3f)) {
                     items(items.size){index ->
                         Row(
                             modifier = Modifier
@@ -153,14 +153,14 @@ fun DisplayList(items: MutableList<Order>, navController: NavController, userId:
                     }
                 }
                 //OpenJobs(navController, userId)
-                Column(modifier = Modifier.fillMaxWidth(),
+                Column(modifier = Modifier.fillMaxWidth().weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally){
                     Button(onClick = { navController.navigate("${Screens.OpenOrders.route}/${userId}") }, colors = ButtonDefaults.textButtonColors(
                         backgroundColor = Color.Blue
                     ), modifier = Modifier
+                        .padding(bottom = 10.dp)
                         .height(80.dp)
-                        .width(200.dp)
-                        .padding(bottom = 20.dp)) {
+                        .width(200.dp)) {
 
                         Text("View open jobs", color = White)
                     }
@@ -168,7 +168,7 @@ fun DisplayList(items: MutableList<Order>, navController: NavController, userId:
                     Button(onClick = { navController.navigate("${Screens.JobHistory.route}/${userId}")}, colors = ButtonDefaults.textButtonColors(
                         backgroundColor = Color.Blue
                     ), modifier = Modifier
-                        .padding(bottom = 20.dp)
+                        .padding(bottom = 10.dp)
                         .width(200.dp)
                         .height(80.dp)) {
 

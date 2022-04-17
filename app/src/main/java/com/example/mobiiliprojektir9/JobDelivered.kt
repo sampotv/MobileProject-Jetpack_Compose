@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -81,7 +82,7 @@ fun Receipt(
             Spacer(modifier = Modifier.padding(10.dp))
             Text(text = "Keikan kuittaus", fontSize = 30.sp)
             TabRowDefaults.Divider(color = Color.Black, thickness = 5.dp)
-            Spacer(modifier = Modifier.padding(10.dp))
+            //Spacer(modifier = Modifier.padding(5.dp))
             if(updateSuccess) {
                 Column(
                     verticalArrangement = Arrangement.Center,
@@ -128,30 +129,47 @@ fun Receipt(
                         horizontalAlignment = Alignment.CenterHorizontally
                         )
                     {
-                        Column(
+                        LazyColumn(
                             modifier = Modifier
-                                .padding(start = 5.dp, end = 2.dp)
-                        ) {
-                            Text(jobInfo.address_from, fontSize = 15.sp)
-                            Text(jobInfo.address_to, fontSize = 15.sp)
-                            Text(jobInfo.content, fontSize = 15.sp)
-                            Text(jobInfo.company, fontSize = 15.sp)
-                            Text(jobInfo.time_created?.toDate()?.getStringTimeStampWithDate()
-                                .toString(),
-                                fontSize = 15.sp)
-                        }
-                        Column(
+                                .weight(3f),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ){
-                            Image(
-                                painter = rememberImagePainter(photoUri),
-                                contentDescription = null,
-                                modifier = Modifier.size(200.dp, 300.dp).padding(2.dp)
-                            )
+                            items(count = 1){
+                                Image(
+                                    painter = rememberImagePainter(photoUri),
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .size(200.dp, 300.dp)
+                                        .padding(2.dp)
+                                )
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 20.dp, end = 10.dp)
+                                ) {
+                                    Text(jobInfo.address_from, fontSize = 15.sp)
+                                    Text(jobInfo.address_to, fontSize = 15.sp)
+                                    Text(jobInfo.content, fontSize = 15.sp)
+                                    Text(jobInfo.company, fontSize = 15.sp)
+                                    Text(jobInfo.time_created?.toDate()?.getStringTimeStampWithDate()
+                                        .toString(),
+                                        fontSize = 15.sp)
+                                }
+                            }
                         }
-                        Column(
-                            modifier = Modifier.weight(1f)
+                        Column(modifier = Modifier
+                            .padding(top = 5.dp)
+                            .weight(1f)
                         ){
+                            Button(
+                                onClick = { openPermissionState = true },
+                                modifier = Modifier
+                                    .size(220.dp, 60.dp)
+                                    .padding(bottom = 2.dp)
+                            ) {
+                                Text("Ota kuva rahtikirjasta")
+                            }
+                            Spacer(modifier = Modifier.padding(3.dp))
                             Button(
                                 onClick = {
                                     jobDone(photoUri,
@@ -159,17 +177,21 @@ fun Receipt(
                                         onUpdateSuccess = { updateSuccess = true },
                                         onUpdateFail = { updateFail = true })
                                 },
-                                modifier = Modifier.size(220.dp, 60.dp)
+                                modifier = Modifier
+                                    .size(220.dp, 60.dp)
+                                    .padding(bottom = 2.dp)
                             ) {
                                 Text("Kuittaa keikka ajetuksi", )
                             }
                         }
+
                     }
                 } else {
                     Column(
                         modifier = Modifier.padding(5.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        Spacer(modifier = Modifier.padding(20.dp))
                         Column(
                             modifier = Modifier.padding(start = 20.dp, end = 5.dp)
                         ){
