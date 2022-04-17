@@ -43,7 +43,6 @@ fun ClosedDeliveriesCompany(
     navController: NavController,
     coordinatorId: String?,
     jobs: MutableList<Order> = getClosedOrdersCompany(company=String()),
-    auth: FirebaseAuth
 ){
     Column(
         modifier = Modifier
@@ -151,5 +150,5 @@ fun getClosedOrdersCompany(company: String): MutableList<Order>{
 @Preview
 @Composable
 fun ClosedDeliveryCompanyPreview(){
-    ClosedDeliveriesCompany(rememberNavController(), coordinatorId = String.toString(), auth = FirebaseAuth.getInstance())
+    ClosedDeliveriesCompany(rememberNavController(), coordinatorId = String.toString())
 }

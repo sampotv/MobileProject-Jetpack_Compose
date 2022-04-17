@@ -39,7 +39,6 @@ class MainActivity : ComponentActivity() {
                 val currentUser = auth.currentUser
                 navController = rememberNavController()
                 SetUpNavigation(navController = navController, auth = auth)
-
                 //jos käyttäjä on kirjautuneena, ohjaa oikealle sivulle
 
                 if (currentUser != null) {

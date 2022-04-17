@@ -33,6 +33,7 @@ fun Login(navController: NavController, auth: FirebaseAuth) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var passwordVisibility by rememberSaveable { mutableStateOf(false) }
+    var showLoading = remember {mutableStateOf(false)}
     val context = LocalContext.current
 
     Column(
@@ -75,13 +76,20 @@ fun Login(navController: NavController, auth: FirebaseAuth) {
             }
         )
         Spacer(modifier = Modifier.padding(20.dp))
+        if(showLoading.value)
+        {
+            LoadingAnimation()
+        }
+        Spacer(modifier = Modifier.padding(20.dp))
         Button(
             onClick = {
+                showLoading.value = true
                 if (email.isEmpty() || password.isEmpty()) {
                     Toast.makeText(
                         context, "Syötä sähköposti ja salasana.",
                         Toast.LENGTH_LONG
                     ).show()
+                    showLoading.value = false
                 } else {
                     auth.signInWithEmailAndPassword(email.trim(), password.trim())
                         .addOnCompleteListener() { task ->
@@ -92,6 +100,7 @@ fun Login(navController: NavController, auth: FirebaseAuth) {
                                     updateUI(user, navController)
                                 }
                             } else {
+                                showLoading.value = false
                                 val errorCode =
                                     (task.exception as FirebaseAuthException?)!!.errorCode
 
@@ -124,13 +133,14 @@ fun Login(navController: NavController, auth: FirebaseAuth) {
         ) {
             Text("Kirjaudu sisään")
         }
-        Spacer(modifier = Modifier.padding(50.dp))
+        Spacer(modifier = Modifier.padding(40.dp))
         Text("Uusi käyttäjä? Rekisteröidy täältä!")
         Button(onClick = { navController.navigate(route = Screens.RegisterAs.route) }) {
             Text("Rekisteröidy")
         }
     }
 }
+
 
 private fun updateUI(userId: String, navController: NavController) {
     //erottelu, onko ajojärjestelijä vai ajaja
@@ -149,6 +159,10 @@ private fun updateUI(userId: String, navController: NavController) {
                 }
             }
         })
+}
+
+private fun loginWithCredentials(){
+
 }
 
 @Preview(showSystemUi = true)
