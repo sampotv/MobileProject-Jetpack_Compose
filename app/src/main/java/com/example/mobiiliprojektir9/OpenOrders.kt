@@ -125,7 +125,7 @@ fun OpenDeliveries(
     )
 }
 
-fun reserveJob(selectedId: String, userId: String?, context: Context) {
+private fun reserveJob(selectedId: String, userId: String?, context: Context) {
     Log.d("reserveJob", "$selectedId,  $userId")//testataan että ollaan saatu tarvittavat tiedot
     val db = FirebaseFirestore.getInstance()
     //päivitetään tietokantaan keikan tietoihin kuljettajan id ja
@@ -144,7 +144,7 @@ fun reserveJob(selectedId: String, userId: String?, context: Context) {
 }
 
 @Composable
-fun OrderRow(job: Order, modifier: Modifier){
+private fun OrderRow(job: Order, modifier: Modifier){
     Column(
         modifier
             .padding(8.dp, top = 20.dp)
@@ -184,7 +184,7 @@ private fun getCompany(userId: String?, db: FirebaseFirestore, setCompanyState: 
         }
 }
 
-private fun getOpenOrders(company: String, db: FirebaseFirestore): MutableList<Order>{
+fun getOpenOrders(company: String, db: FirebaseFirestore): MutableList<Order>{
     Log.d("function", "getOpenOrders")
     Log.d("company", company)
     var jobs = mutableStateListOf<Order>()
@@ -197,11 +197,11 @@ private fun getOpenOrders(company: String, db: FirebaseFirestore): MutableList<O
         .addOnSuccessListener { documents ->
             for (document in documents){
                 val order = document.toObject<Order>()
-                val time = order.time_created?.toDate()
+                //val time = order.time_created?.toDate()
                 order.order_id = document.id
                 jobs.add(order)
                 Log.d("getOpenOrders ", "${document.id} => ${document.data}")
-                Log.d("order time ", "$time")
+                //Log.d("order time ", "$time")
                 //Log.d("order time ", "$formattedDate")
             }
         }

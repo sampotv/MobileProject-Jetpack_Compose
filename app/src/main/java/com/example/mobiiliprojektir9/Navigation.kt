@@ -55,6 +55,15 @@ fun SetUpNavigation(navController : NavHostController, auth: FirebaseAuth) {
 
         }
         composable(
+            route = Screens.OpenOrdersCoordinator.route + "/{userId}"
+        ){ backStackEntry ->
+            OpenDeliveriesCoordinator(
+                navController = navController,
+                backStackEntry.arguments?.getString("userId")
+            )
+
+        }
+        composable(
             route = Screens.DriverSite.route + "/{userId}",
         ) { backStackEntry ->
             DriverSite(

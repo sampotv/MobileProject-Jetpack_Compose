@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobiiliprojektir9.Order
-import com.example.mobiiliprojektir9.OrderRow
 import com.example.mobiiliprojektir9.Screens
 import com.example.mobiiliprojektir9.getStringTimeStampWithDate
 import com.example.mobiiliprojektir9.ui.theme.LogOut
