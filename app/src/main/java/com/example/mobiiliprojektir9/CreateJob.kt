@@ -57,6 +57,13 @@ fun CreateJob(navController: NavController, userId: String?) {
     var mista by rememberSaveable { mutableStateOf("") } //ei tallenna statea jonkun takia ?
     var mihin by rememberSaveable { mutableStateOf("") }
     var selite by rememberSaveable { mutableStateOf("") }
+    var jobCreated by rememberSaveable {mutableStateOf(false)}
+    if(jobCreated){
+        mista = ""
+        mihin = ""
+        selite = ""
+        jobCreated = false
+    }
 
     Scaffold(
         topBar = {
@@ -152,6 +159,8 @@ fun CreateJob(navController: NavController, userId: String?) {
                                         context, "Keikan lisääminen onnistui!",
                                         Toast.LENGTH_LONG
                                     ).show()
+                                    Log.d("Create job documentRef", it.id)
+                                    jobCreated = true
                                 }
                                 .addOnFailureListener {
                                     Toast.makeText(
