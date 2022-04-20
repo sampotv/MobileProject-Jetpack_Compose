@@ -95,20 +95,17 @@ private fun getListItems(userId: String?): MutableList<Order>{
         .whereEqualTo("driver_id", userId)
         .whereEqualTo("state", "reserved")
         .orderBy("time_created", Query.Direction.ASCENDING)
-        .get()
-        .addOnSuccessListener { documents ->
-            for (document in documents){
-                val item = document.toObject<Order>()
-                val time = item.time_created?.toDate()
-                item.order_id = document.id
-                listItems.add(item)
-                Log.d("getListItems ", "${document.id} => ${document.data}")
-                Log.d("order time ", "$time")
-                //Log.d("order time ", "$formattedDate")
+        .addSnapshotListener { value, e ->
+            if(e != null){
+                Log.w("fetchOpenOrders", "Listen failed with ", e)
+                return@addSnapshotListener
             }
-        }
-        .addOnFailureListener{ exception ->
-            Log.w("Failed, ", "Error getting document: ", exception)
+            listItems.clear()
+            for (doc in value!!){
+                val order = doc.toObject<Order>()
+                order.order_id = doc.id
+                listItems.add(order)
+            }
         }
     Log.d("listItems ", "$listItems")
     return listItems
@@ -134,7 +131,7 @@ fun DisplayList(items: MutableList<Order>, navController: NavController, userId:
                 horizontalAlignment = Alignment.CenterHorizontally){
 
                 LazyColumn(modifier = Modifier
-                    .padding(top = 20.dp, bottom = 50.dp)
+                    .padding(top = 20.dp, bottom = 50.dp, end = 5.dp)
                     .weight(3f)) {
                     items(items.size){index ->
                         Row(
@@ -152,7 +149,9 @@ fun DisplayList(items: MutableList<Order>, navController: NavController, userId:
                     }
                 }
                 //OpenJobs(navController, userId)
-                Column(modifier = Modifier.fillMaxWidth().weight(1f),
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally){
                     Button(onClick = { navController.navigate("${Screens.OpenOrders.route}/${userId}") }, colors = ButtonDefaults.textButtonColors(
                         backgroundColor = Color.Blue
@@ -177,6 +176,7 @@ fun DisplayList(items: MutableList<Order>, navController: NavController, userId:
             }
         })
 }
+
 @Composable
 fun ItemRow(item: Order, modifier: Modifier){
     Row(
@@ -191,60 +191,47 @@ fun ItemRow(item: Order, modifier: Modifier){
         Column(
             modifier
                 .padding(2.dp)
-        ){
+        ) {
             Text("Lähtöosoite: " + item.address_from)
             Text("Kohdeosoite: " + item.address_to)
             Text("Sisältö: " + item.content)
             Text("Yritys: " + item.company)
             Text("Luotu: " + item.time_created?.toDate()?.getStringTimeStampWithDate())
         }
-    }
+}
 }
 
-@Composable
-fun OpenJobs(navController: NavController, userId: String?){
-    Log.d("OpenJobs", "$userId")
-    Column(modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally){
+//@Composable
+//fun OpenJobs(navController: NavController, userId: String?){
+//    Log.d("OpenJobs", "$userId")
+//    Column(modifier = Modifier.fillMaxWidth(),
+//        horizontalAlignment = Alignment.CenterHorizontally){
+//
+//        Button(onClick = { navController.navigate("${Screens.OpenOrders.route}/${userId}") }, colors = ButtonDefaults.textButtonColors(
+//            backgroundColor = Color.Blue
+//        ), modifier = Modifier
+//            .height(100.dp)
+//            .width(200.dp)
+//            .padding(bottom = 20.dp)) {
+//
+//            Text("View open jobs", color = White)
+//
+//        }
+//
+//        Button(onClick = { navController.navigate("${Screens.JobHistory.route}/${userId}")}, colors = ButtonDefaults.textButtonColors(
+//            backgroundColor = Color.Blue
+//        ), modifier = Modifier
+//            .padding(bottom = 20.dp)
+//            .width(200.dp)
+//            .height(100.dp)) {
+//
+//            Text("View completed jobs", color = White)
+//
+//        }
+//
+//    }
+//}
 
-        Button(onClick = { navController.navigate("${Screens.OpenOrders.route}/${userId}") }, colors = ButtonDefaults.textButtonColors(
-            backgroundColor = Color.Blue
-        ), modifier = Modifier
-            .height(100.dp)
-            .width(200.dp)
-            .padding(bottom = 20.dp)) {
-
-            Text("View open jobs", color = White)
-
-        }
-
-        Button(onClick = { navController.navigate("${Screens.JobHistory.route}/${userId}")}, colors = ButtonDefaults.textButtonColors(
-            backgroundColor = Color.Blue
-        ), modifier = Modifier
-            .padding(bottom = 20.dp)
-            .width(200.dp)
-            .height(100.dp)) {
-
-            Text("View completed jobs", color = White)
-
-        }
-
-    }
-}
-//private val listItems: List<ListItem> = listOf(
-//    ListItem("Job1"),
-//    ListItem("Job2"),
-//    ListItem("Job3"),
-//    ListItem("Job4"),
-//    ListItem("Job5"),
-//    ListItem("Job6"),
-//    ListItem("Job7"),
-//    ListItem("Job8"),
-//    ListItem("Job9"),
-//    ListItem("Job10"),
-//    ListItem("Job11"),
-//    ListItem("Job12")
-//)
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {

@@ -43,17 +43,10 @@ import java.util.*
 @Composable
 fun OpenDeliveries(
     navController: NavController,
-    userId: String?,
-//    db: FirebaseFirestore = FirebaseFirestore.getInstance(),
-//    company: String? = getCompany(userId, db),
-//    jobs: MutableList<Order> = getOpenOrders(company, db),
+    userId: String?
 ){
     var userIdTest = "YJ16ji7asQaR7SBpbGJoMRZymys2"//testausta varten otettu driveId tietokannasta
-    Log.d("openDeliveries", "$userId")
-    //val companyTest = "yritys1"
     val db = FirebaseFirestore.getInstance()
-    //val company = "Kuljetusyritys"
-    var jobs: MutableList<Order>
     var companyState by remember { mutableStateOf("")}
     var dialogState by remember { mutableStateOf(false)}
     var isJobSelected by remember { mutableStateOf(false)}
@@ -61,6 +54,8 @@ fun OpenDeliveries(
     var selectedItem by remember {mutableStateOf( Order())}
     val context = LocalContext.current
 
+    getCompany(userId, db, setCompanyState = {companyState = it})
+    var jobs: MutableList<Order> = fetchOpenOrders(companyState, db)
 
     Scaffold(
         topBar = { TopAppBar(
@@ -84,8 +79,6 @@ fun OpenDeliveries(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top
             ){
-                getCompany(userId, db, setCompanyState = {companyState = it})
-                jobs  = getOpenOrders(companyState, db)
                 val listState = rememberLazyListState()
                 LazyColumn(
                     state = listState,
@@ -126,7 +119,6 @@ fun OpenDeliveries(
 }
 
 private fun reserveJob(selectedId: String, userId: String?, context: Context) {
-    Log.d("reserveJob", "$selectedId,  $userId")//testataan että ollaan saatu tarvittavat tiedot
     val db = FirebaseFirestore.getInstance()
     //päivitetään tietokantaan keikan tietoihin kuljettajan id ja
     // state-kenttään "open" tilalle "reserved"
@@ -168,14 +160,13 @@ private fun OrderRow(job: Order, modifier: Modifier){
 }
 
 private fun getCompany(userId: String?, db: FirebaseFirestore, setCompanyState: (String) -> Unit) {
-    //Log.d("function", "getCompany $userId")
     db.collection("drivers").whereEqualTo("driverId", userId)
         .get()
         .addOnSuccessListener { documents ->
             for(document in documents){
                 val data = document.toObject<DriverData>()
                 val company = data.company
-                Log.d("getCompany Success", company)
+                Log.d("Driver getCompany Success", company)
                 setCompanyState(company)
             }
         }
@@ -183,7 +174,28 @@ private fun getCompany(userId: String?, db: FirebaseFirestore, setCompanyState: 
             Log.w("Failed, ", "Error getting document: ", exception)
         }
 }
+fun fetchOpenOrders(company: String, db: FirebaseFirestore): MutableList<Order>{
+    val jobs = mutableStateListOf<Order>()
 
+    db.collection("Jobs")
+        .whereEqualTo("state", "open")
+        .whereEqualTo("company", company)
+        .orderBy("time_created", Query.Direction.ASCENDING)
+        .addSnapshotListener { value, e ->
+            if(e != null){
+                Log.w("fetchOpenOrders", "Listen failed with ", e)
+                return@addSnapshotListener
+            }
+            jobs.clear()
+            for (doc in value!!){
+                val order = doc.toObject<Order>()
+                order.order_id = doc.id
+                jobs.add(order)
+            }
+        }
+    return jobs
+}
+//korvattu fetchOpenOrdersilla, joka käyttää snapshotListeneria
 fun getOpenOrders(company: String, db: FirebaseFirestore): MutableList<Order>{
     Log.d("function", "getOpenOrders")
     Log.d("company", company)
@@ -197,12 +209,9 @@ fun getOpenOrders(company: String, db: FirebaseFirestore): MutableList<Order>{
         .addOnSuccessListener { documents ->
             for (document in documents){
                 val order = document.toObject<Order>()
-                //val time = order.time_created?.toDate()
                 order.order_id = document.id
                 jobs.add(order)
                 Log.d("getOpenOrders ", "${document.id} => ${document.data}")
-                //Log.d("order time ", "$time")
-                //Log.d("order time ", "$formattedDate")
             }
         }
         .addOnFailureListener{ exception ->

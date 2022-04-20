@@ -39,6 +39,7 @@ fun RegisterCoordinator(navController: NavController){
     var passwordVisibility by remember { mutableStateOf(true)}
     var companyErrorState by remember { mutableStateOf(false)}
     var phoneNumErrorState by remember { mutableStateOf(false)}
+    var showLoading by remember { mutableStateOf(false)}
 
     var emailState by remember {
         mutableStateOf("")
@@ -161,6 +162,10 @@ fun RegisterCoordinator(navController: NavController){
             if(companyErrorState){
                 Text(text = "Tarkista yritys", color = Color.Red)
             }
+            if(showLoading)
+            {
+                LoadingAnimation()
+            }
             Spacer(modifier = Modifier.height(24.dp))
             Button(onClick = {
                 when {
@@ -182,6 +187,8 @@ fun RegisterCoordinator(navController: NavController){
                         companyErrorState = false
                         phoneNumErrorState = false
 
+                        showLoading = true
+
                         coordinatorRegister(
                             navController,
                             context,
@@ -190,7 +197,8 @@ fun RegisterCoordinator(navController: NavController){
                             emailState,
                             setEmailErrorState = { emailErrorState = it },
                             phonenumState,
-                            companyState
+                            companyState,
+                            setLoadingAnimation = {showLoading = it}
                         )
                     }
                 }
@@ -200,10 +208,13 @@ fun RegisterCoordinator(navController: NavController){
         }
 }
 
-private fun saveCoordinatorData(coordinatorData: CoordinatorData,
-                                context: Context,
-                                user: FirebaseUser,
-                                navController: NavController) {
+private fun saveCoordinatorData(
+    coordinatorData: CoordinatorData,
+    context: Context,
+    user: FirebaseUser,
+    navController: NavController,
+    setLoadingAnimation: (Boolean) -> Unit
+) {
     val userId = coordinatorData.coordinatorId
     val db = FirebaseFirestore.getInstance()
     db.collection("coordinator")
@@ -216,6 +227,7 @@ private fun saveCoordinatorData(coordinatorData: CoordinatorData,
             navController.navigate("${Screens.CreateJob.route}/${userId}")
         }
         .addOnFailureListener { e ->
+            setLoadingAnimation(false)
             Log.w(ControlsProviderService.TAG, "Error adding document", e)
             user.delete().addOnCompleteListener{task ->
                 if(task.isSuccessful){
@@ -234,7 +246,8 @@ private fun coordinatorRegister(
     registerEmail: String,
     setEmailErrorState: (Boolean) -> Unit,
     registerPhoneNum: String,
-    registerCompany: String
+    registerCompany: String,
+    setLoadingAnimation: (Boolean) -> Unit
 ) {
     val auth: FirebaseAuth = FirebaseAuth.getInstance()
     Log.d("auth", "create user")
@@ -253,16 +266,19 @@ private fun coordinatorRegister(
                     phoneNum = registerPhoneNum
                     company = registerCompany
                 }
-                saveCoordinatorData(coordinatorData, context, user, navController)
+                saveCoordinatorData(coordinatorData, context, user, navController, setLoadingAnimation)
             }
 
         } else {
+            setLoadingAnimation(false)
             Log.d("AUTH", "Failed: ${task.exception}")
             Toast.makeText(context, "${task.exception}", Toast.LENGTH_SHORT).show()
             if(task.exception.toString() == "com.google.firebase.auth.FirebaseAuthWeakPasswordException: The given password is invalid. [ Password should be at least 6 characters ]"){
                 setPasswordErrorState(true)
             }
-            else if(task.exception.toString() == "Failed: com.google.firebase.auth.FirebaseAuthInvalidCredentialsException: The email address is badly formatted."){
+            else if(task.exception.toString() == "com.google.firebase.auth.FirebaseAuthInvalidCredentialsException: The email address is badly formatted."
+                || task.exception.toString() =="com.google.firebase.auth.FirebaseAuthUserCollisionException: The email address is already in use by another account.")
+                {
                 setEmailErrorState(true)
             }
         }

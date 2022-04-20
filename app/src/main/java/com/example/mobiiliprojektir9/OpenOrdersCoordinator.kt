@@ -43,11 +43,10 @@ fun OpenDeliveriesCoordinator(
     navController: NavController,
     userId: String?
 ){
-    Log.d("openDeliveries", "$userId")
     val db = FirebaseFirestore.getInstance()
     var companyState by remember { mutableStateOf("")}
     getCompany(userId, db, setCompanyState = {companyState = it})
-    var jobs: MutableList<Order> = getOpenOrders(companyState, db)
+    var jobs: MutableList<Order> = fetchOpenOrders(companyState, db)
     var drivers: MutableList<DriverData> = getDriverList(db, companyState)
     var selectedDriver by remember { mutableStateOf(DriverData())}
     var isJobReserved by remember { mutableStateOf(false)}
@@ -96,7 +95,6 @@ fun OpenDeliveriesCoordinator(
                                 isJobReserved,
                                 setJobReserved = {isJobReserved = it},
                                 onJobReserved = {
-                                    jobs.remove(it)
                                     isJobReserved = true
                                 }
                             )
@@ -119,8 +117,9 @@ private fun OrderRow(
     context: Context,
     isJobReserved: Boolean,
     setJobReserved: (Boolean) -> Unit,
-    onJobReserved: (Order) -> Unit
+    onJobReserved: () -> Unit
 ) {
+    Log.d("OrderRow", job.order_id)
     Column(
         modifier
             .padding(8.dp, top = 20.dp)
@@ -148,7 +147,7 @@ private fun OrderRow(
                 DropDownMenu(drivers, setSelectedDriver, isJobReserved, setJobReserved)
                 Button(
                     onClick = {
-                        reserveJob(job, selectedDriver, db, context, onJobReserved)
+                        reserveJob(job.order_id, selectedDriver, db, context, onJobReserved)
                     }
                 ) {
                     Text(text = "Varaa keikka kuljettajalle")
@@ -212,22 +211,21 @@ fun DropDownMenu(
     }
 }
 private fun reserveJob(
-    order: Order,
+    orderId: String,
     selectedDriver: DriverData,
     db: FirebaseFirestore,
     context: Context,
-    onJobReserved: (Order) -> Unit
+    onJobReserved: () -> Unit
 ){
-    val orderId = order.order_id
-    Log.d("reserveJob", "orderId: $orderId, selectedDriver: ${selectedDriver.email}")
+    Log.d("reserveJob Coordinator", "orderId: $orderId, selectedDriver: ${selectedDriver.email}")
 
     db.collection("Jobs").document(orderId)
         .update("driver_id", selectedDriver.driverId,
             "state", "reserved")
         .addOnSuccessListener {
-            Log.d("tag", "update successful!")
+            Log.d("reserveJob Coordinator", "update successful!")
             Toast.makeText(context, "Keikka varattu", Toast.LENGTH_SHORT).show()
-            onJobReserved(order)
+            onJobReserved()
 
         }
         .addOnFailureListener { e ->
@@ -237,7 +235,7 @@ private fun reserveJob(
 }
 
 fun getDriverList(db: FirebaseFirestore, company: String): MutableList<DriverData> {
-    var driverList = mutableStateListOf<DriverData>()
+    val driverList = mutableStateListOf<DriverData>()
 
     db.collection("drivers")
         .whereEqualTo("company", company)
@@ -256,16 +254,14 @@ fun getDriverList(db: FirebaseFirestore, company: String): MutableList<DriverDat
     return driverList
 }
 
-
 private fun getCompany(userId: String?, db: FirebaseFirestore, setCompanyState: (String) -> Unit) {
-    //Log.d("function", "getCompany $userId")
     db.collection("coordinator").whereEqualTo("coordinatorId", userId)
         .get()
         .addOnSuccessListener { documents ->
             for(document in documents){
                 val data = document.toObject<DriverData>()
                 val company = data.company
-                Log.d("getCompany Success", company)
+                Log.d("Coordinator getCompany Success", company)
                 setCompanyState(company)
             }
         }
