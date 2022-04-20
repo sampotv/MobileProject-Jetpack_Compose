@@ -20,6 +20,8 @@ import androidx.compose.material.TabRowDefaults.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,9 +43,17 @@ import java.util.*
 @Composable
 fun ClosedDeliveriesCompany(
     navController: NavController,
-    coordinatorId: String?,
-    jobs: MutableList<Order> = getClosedOrdersCompany(company=String()),
+    userId: String?,
+
+    //jobs: MutableList<Order> = getClosedOrdersCompany(company= String()),
+    //auth: FirebaseAuth
 ){
+    val db = FirebaseFirestore.getInstance()
+    var companyState by remember { mutableStateOf("")}
+    getCompany(userId, db, setCompanyState = {companyState = it})
+    var jobs by remember { mutableStateOf(mutableListOf<Order>())}
+    getClosedOrdersCompany(db, setJobs = { jobs = it}, companyState)
+
     Column(
         modifier = Modifier
             .padding(24.dp)
@@ -62,7 +72,7 @@ fun ClosedDeliveriesCompany(
             modifier = Modifier
                 .weight(1f)
                 .padding(start = 20.dp, end = 20.dp)
-                .clickable {  }
+                .clickable { }
         ){
             items(jobs){job ->
                 ClosedOrderCompanyRow(
@@ -102,29 +112,14 @@ fun Date.getStringTimeStampWithDate3(): String {
     return dateFormat.format(this)
 }
 
-fun getCompany(coordinatorId: String?) {
-    val db = FirebaseFirestore.getInstance()
-    var coordinatorId = "e1rne4WYcTWL0LBgVqfrW7CxyE72"
-    db.collection("coordinator")
-        .whereEqualTo("coordinatorId", coordinatorId)
-        .get()
-        .addOnSuccessListener { documents ->
-            for(document in documents){
-                val data = document.toObject<CoordinatorData>()
-                val company = data.company
-                Log.d("getCompany Success", company)
 
-            }
-        }
-        .addOnFailureListener{ exception ->
-            Log.w("Failed, ", "Error getting document: ", exception)
-        }
-}
+@Composable
+fun getClosedOrdersCompany(db: FirebaseFirestore, setJobs: (MutableList<Order>) -> Unit, company: String): MutableList<Order>{
+    var jobs by remember { mutableStateOf(mutableListOf<Order>())}
+    //var compa = getCompany(userId , db )
+    Log.d("function", "getClosedOrders")
 
-fun getClosedOrdersCompany(company: String): MutableList<Order>{
-    Log.d("function", "getOpenOrders")
-    var jobs =  mutableStateListOf<Order>()
-    val db = FirebaseFirestore.getInstance()
+
     db.collection("Jobs")
         .whereEqualTo("company", company)
         .whereEqualTo("state", "closed")
@@ -137,7 +132,9 @@ fun getClosedOrdersCompany(company: String): MutableList<Order>{
                 jobs.add(order)
                 Log.d("getClosedOrders ", "${document.id} => ${document.data}")
                 Log.d("order time ", "$time")
+                setJobs(jobs)
                 //Log.d("order time ", "$formattedDate")
+
             }
         }
         .addOnFailureListener{ exception ->
@@ -147,8 +144,30 @@ fun getClosedOrdersCompany(company: String): MutableList<Order>{
     return jobs
 }
 
+private fun getCompany(userId: String?, db: FirebaseFirestore, setCompanyState: (String) -> Unit) {
+    Log.d("testi", "tei")
+    //var coordinatorId = "e1rne4WYcTWL0LBgVqfrW7CxyE72"
+
+    db.collection("coordinator").whereEqualTo("coordinatorId", userId)
+
+        .get()
+        .addOnSuccessListener { documents ->
+            for(document in documents){
+
+                val data = document.toObject<CoordinatorData>()
+                val company = data.company
+                Log.d("getCompany Success", company)
+                setCompanyState(company)
+                Log.d("testi", company)
+            }
+        }
+        .addOnFailureListener{ exception ->
+            Log.w("Failed, ", "Error getting document: ", exception)
+        }
+}
+
 @Preview
 @Composable
 fun ClosedDeliveryCompanyPreview(){
-    ClosedDeliveriesCompany(rememberNavController(), coordinatorId = String.toString())
+    ClosedDeliveriesCompany(rememberNavController(), userId = String.toString())
 }
