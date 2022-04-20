@@ -26,13 +26,14 @@ fun LogOut(navController: NavController){
     val auth = FirebaseAuth.getInstance()
     Button(
         onClick = {signOutUser(navController, auth)},
+        elevation = ButtonDefaults.elevation(0.dp,0.dp),
         //colors = ButtonDefaults.buttonColors(backgroundColor = Color.Yellow),
         contentPadding = PaddingValues(
             start = 20.dp,
             top = 12.dp,
             end = 20.dp,
             bottom = 12.dp
-        )
+        ),
     ) {
         Icon(
             Icons.Filled.Person,

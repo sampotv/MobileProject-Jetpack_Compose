@@ -27,7 +27,7 @@ import androidx.ui.temputils.delay
 @Composable
 fun LoadingAnimation(
     modifier: Modifier = Modifier,
-    circleSize: Dp = 25.dp,
+    circleSize: Dp = 20.dp,
     circleColor: Color = MaterialTheme.colors.primary,
     spaceBetween: Dp = 10.dp,
     travelDistance: Dp = 20.dp,

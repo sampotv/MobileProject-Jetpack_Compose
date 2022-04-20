@@ -3,15 +3,22 @@ package com.example.mobiiliprojektir9
 import android.content.ContentValues.TAG
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -27,7 +34,18 @@ import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 
+@Composable
+fun Logo(){
 
+    Box(
+        modifier = Modifier.size(100.dp).clip(CircleShape).background(Color.White),
+        contentAlignment = Alignment.Center
+
+    ){
+        Text(text = "KP", fontSize = 46.sp, color = MaterialTheme.colors.primary, fontFamily = FontFamily.SansSerif, fontWeight = FontWeight.ExtraBold)
+    }
+
+}
 @Composable
 fun Login(navController: NavController, auth: FirebaseAuth) {
     var email by rememberSaveable { mutableStateOf("") }
@@ -37,13 +55,24 @@ fun Login(navController: NavController, auth: FirebaseAuth) {
     val context = LocalContext.current
 
     Column(
-        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        MaterialTheme.colors.primary,
+                        MaterialTheme.colors.primaryVariant
+                    )
+                )
+            )
     )
     {
         Spacer(modifier = Modifier.padding(20.dp))
-        Text(text = "Kirjaudu sisään", fontSize = 20.sp)
+        Logo()
+        Spacer(modifier = Modifier.padding(20.dp))
+        Text(text = "Kirjaudu sisään", fontSize = 20.sp, color = Color.White)
         Spacer(modifier = Modifier.padding(5.dp))
         TextField(
             value = email,
@@ -52,7 +81,10 @@ fun Login(navController: NavController, auth: FirebaseAuth) {
             modifier = Modifier
                 .width(300.dp)
                 .wrapContentHeight(align = Alignment.CenterVertically),
-            maxLines = 1
+            maxLines = 1,
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = Color(0xFFFFFFFFFF)
+            )
         )
 
         TextField(value = password,
@@ -73,14 +105,16 @@ fun Login(navController: NavController, auth: FirebaseAuth) {
                     )
 
                 }
-            }
+            },
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = Color(0xFFFFFFFFFF)
+            )
         )
-        Spacer(modifier = Modifier.padding(20.dp))
         if(showLoading.value)
         {
             LoadingAnimation()
         }
-        Spacer(modifier = Modifier.padding(20.dp))
+        Spacer(modifier = Modifier.padding(10.dp))
         Button(
             onClick = {
                 showLoading.value = true
@@ -133,7 +167,7 @@ fun Login(navController: NavController, auth: FirebaseAuth) {
         ) {
             Text("Kirjaudu sisään")
         }
-        Spacer(modifier = Modifier.padding(40.dp))
+        Spacer(modifier = Modifier.padding(5.dp))
         Text("Uusi käyttäjä? Rekisteröidy täältä!")
         Button(onClick = { navController.navigate(route = Screens.RegisterAs.route) }) {
             Text("Rekisteröidy")

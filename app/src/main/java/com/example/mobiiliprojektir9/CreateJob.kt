@@ -162,7 +162,7 @@ fun CreateJob(navController: NavController, userId: String?) {
                         }
                     },
                     modifier = Modifier
-                        .width(140.dp)
+                        .width(150.dp)
                         .height(50.dp)
                 ) {
                     Text(text = "Luo uusi keikka", textAlign = TextAlign.Center)
@@ -178,7 +178,7 @@ fun CreateJob(navController: NavController, userId: String?) {
                             navController.navigate("${Screens.OpenOrdersCoordinator.route}/${userId}")
                         },
                         modifier = Modifier
-                            .width(140.dp)
+                            .width(150.dp)
                             .height(50.dp)
                     ) {
                         Text(text = "Avoimet keikat", textAlign = TextAlign.Center)
@@ -188,7 +188,7 @@ fun CreateJob(navController: NavController, userId: String?) {
                             navController.navigate("${Screens.JobHistoryCompany.route}/${userId}")
                         },
                         modifier = Modifier
-                            .width(140.dp)
+                            .width(150.dp)
                             .height(50.dp)
                     ) {
                         Text(text = "Kuitatut keikat", textAlign = TextAlign.Center)
