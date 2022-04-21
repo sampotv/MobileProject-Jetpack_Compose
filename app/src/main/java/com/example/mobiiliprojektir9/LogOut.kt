@@ -26,7 +26,7 @@ fun LogOut(navController: NavController){
     val auth = FirebaseAuth.getInstance()
     Button(
         onClick = {signOutUser(navController, auth)},
-        //colors = ButtonDefaults.buttonColors(backgroundColor = Color.Yellow),
+        elevation = ButtonDefaults.elevation(0.dp,0.dp),
         contentPadding = PaddingValues(
             start = 20.dp,
             top = 12.dp,

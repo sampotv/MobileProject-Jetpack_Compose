@@ -67,18 +67,7 @@ fun CreateJob(navController: NavController, userId: String?) {
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                elevation = 4.dp,
-                title = { Text(text = "Keikat") },
-                navigationIcon = {
-                    IconButton(onClick = { /* hamburger menu käyttäjälle tai keikoile emt mby*/ }) {
-                        Icon(Icons.Filled.Menu, "menu", tint = Color.White)
-                    }
-                },
-                actions = {
-                    LogOut(navController)
-                }
-            )
+            TopBar(navController)
         },
         content = {
             Column(
