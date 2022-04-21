@@ -14,10 +14,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.Divider
-import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -47,38 +47,51 @@ fun ClosedDeliveriesCompany(
 
     //jobs: MutableList<Order> = getClosedOrdersCompany(company= String()),
     //auth: FirebaseAuth
-){
+) {
     val db = FirebaseFirestore.getInstance()
-    var companyState by remember { mutableStateOf("")}
-    getCompany(userId, db, setCompanyState = {companyState = it})
-    var jobs by remember { mutableStateOf(mutableListOf<Order>())}
-    getClosedOrdersCompany(db, setJobs = { jobs = it}, companyState)
+    var companyState by remember { mutableStateOf("") }
+    getCompany(userId, db, setCompanyState = { companyState = it })
+    var jobs by remember { mutableStateOf(mutableListOf<Order>()) }
+    getClosedOrdersCompany(db, setJobs = { jobs = it }, companyState)
 
-    Column(
-        modifier = Modifier
-            .padding(24.dp)
-            .fillMaxSize()
-            .background(Color.White),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ){
-        //OpenDeliveries(auth = auth, navController = navController)
-        Text(
-            text = "Ajetut keikat",
-            style = MaterialTheme.typography.h5
-        )
-        Spacer(modifier = Modifier.width(24.dp))
-        LazyColumn(
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                elevation = 4.dp,
+                title = { Text(text = "Ajetut keikat") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.navigate("${Screens.CreateJob.route}/${userId}") }) {
+                        Icon(Icons.Filled.ArrowBack, null, tint = Color.White)
+                    }
+                },
+                actions = {
+                    LogOut(navController)
+                }
+            )
+        }
+
+    ) {
+        Column(
             modifier = Modifier
-                .weight(1f)
-                .padding(start = 20.dp, end = 20.dp)
-                .clickable { }
-        ){
-            items(jobs){job ->
-                ClosedOrderCompanyRow(
-                    job,
-                    Modifier.fillParentMaxWidth()
-                )
+                .padding(24.dp)
+                .fillMaxSize()
+                .background(Color.White),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
+            LazyColumn(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 20.dp, end = 20.dp)
+                    .clickable { }
+            ) {
+                items(jobs) { job ->
+                    ClosedOrderCompanyRow(
+                        job,
+                        Modifier.fillParentMaxWidth()
+                    )
+                }
             }
         }
     }

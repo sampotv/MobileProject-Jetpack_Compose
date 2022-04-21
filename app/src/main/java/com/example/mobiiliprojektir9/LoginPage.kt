@@ -30,7 +30,6 @@ import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 
-
 @Composable
 fun Login(navController: NavController, auth: FirebaseAuth) {
     var email by rememberSaveable { mutableStateOf("") }
@@ -158,14 +157,15 @@ fun Login(navController: NavController, auth: FirebaseAuth) {
             },
             modifier = Modifier.size(220.dp, 50.dp)
         ) {
-            Text("Kirjaudu sisään")
+            Text("Kirjaudu sisään", style =  MaterialTheme.typography.body1)
         }
         Spacer(modifier = Modifier.padding(5.dp))
         Text("Uusi käyttäjä? Rekisteröidy täältä!")
-        Button(shape = MaterialTheme.shapes.medium,
+        Button(
+            shape = MaterialTheme.shapes.medium,
             modifier = Modifier.size(220.dp, 50.dp),
             onClick = { navController.navigate(route = Screens.RegisterAs.route) }) {
-            Text("Rekisteröidy")
+            Text("Rekisteröidy", style =  MaterialTheme.typography.body1)
         }
     }
 }

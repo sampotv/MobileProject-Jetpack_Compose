@@ -224,7 +224,7 @@ fun RegisterDriver(navController: NavController) {
                     }
                 }
             }) {
-            Text("Rekisteröidy")
+            Text("Rekisteröidy", style =  MaterialTheme.typography.body1)
         }
     }
 }

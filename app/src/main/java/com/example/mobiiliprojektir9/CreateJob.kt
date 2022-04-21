@@ -160,11 +160,11 @@ fun CreateJob(navController: NavController, userId: String?) {
                         }
                     },
                     modifier = Modifier
-                        .width(140.dp)
+                        .width(160.dp)
                         .height(50.dp),
-                    shape = MaterialTheme.shapes.medium
+                    shape = MaterialTheme.shapes.medium,
                 ) {
-                    Text(text = "Luo uusi keikka", textAlign = TextAlign.Center)
+                    Text(text = "Luo uusi keikka", textAlign = TextAlign.Center, style = MaterialTheme.typography.body1)
                 }
                 Spacer(Modifier.height(30.0.dp))
                 Row(
@@ -177,22 +177,22 @@ fun CreateJob(navController: NavController, userId: String?) {
                             navController.navigate("${Screens.OpenOrdersCoordinator.route}/${userId}")
                         },
                         modifier = Modifier
-                            .width(140.dp)
+                            .width(160.dp)
                             .height(50.dp),
                         shape = MaterialTheme.shapes.medium
                     ) {
-                        Text(text = "Avoimet keikat", textAlign = TextAlign.Center)
+                        Text(text = "Avoimet keikat", textAlign = TextAlign.Center, style = MaterialTheme.typography.body1)
                     }
                     Button(
                         onClick = {
                             navController.navigate("${Screens.JobHistoryCompany.route}/${userId}")
                         },
                         modifier = Modifier
-                            .width(140.dp)
+                            .width(160.dp)
                             .height(50.dp),
                         shape = MaterialTheme.shapes.medium
                     ) {
-                        Text(text = "Kuitatut keikat", textAlign = TextAlign.Center)
+                        Text(text = "Kuitatut keikat", textAlign = TextAlign.Center, style = MaterialTheme.typography.body1)
                     }
                 }
             }

@@ -1,5 +1,6 @@
 package com.example.mobiiliprojektir9.ui.theme
 
+import android.graphics.fonts.FontFamily
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
@@ -12,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobiiliprojektir9.Screens
@@ -40,7 +42,7 @@ fun LogOut(navController: NavController){
             modifier = Modifier.size(ButtonDefaults.IconSize)
         )
         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-        Text("Kirjaudu ulos")
+        Text("Kirjaudu ulos", fontSize = 16.sp, style = MaterialTheme.typography.body2)
     }
 }
 

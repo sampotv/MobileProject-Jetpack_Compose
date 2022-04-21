@@ -122,7 +122,7 @@ private fun OrderRow(
     Log.d("OrderRow", job.order_id)
     Column(
         modifier
-            .padding(8.dp, top = 20.dp)
+            .padding(start = 8.dp, end = 8.dp, top = 20.dp)
             .border(
                 border = BorderStroke(1.dp, Color.Black),
                 shape = RoundedCornerShape(8.dp)

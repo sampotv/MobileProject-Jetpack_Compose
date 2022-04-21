@@ -41,21 +41,6 @@ import java.util.*
 
 data class ListItem(val name: String)
 
-//class MainActivity : ComponentActivity() {
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContent {
-//
-//            Surface(color = MaterialTheme.colors.background) {
-//                DisplayList(items = listItems)
-//            }
-//
-//
-//        }
-//
-//    }
-//}
-
 @Composable
 fun DriverSite(navController: NavController, userId: String?, auth: FirebaseAuth) {
 //    val userIdTest = "PPQH4E4bLIfORaMH9p30GkEQlQs2"
@@ -162,7 +147,7 @@ fun DisplayList(
                             .height(70.dp)
                             .width(200.dp)) {
 
-                        Text("Avoimet keikat", color = White)
+                        Text("Avoimet keikat", color = White, style =  MaterialTheme.typography.body1)
                     }
 
                     Button(onClick = { navController.navigate("${Screens.JobHistory.route}/${userId}") },
@@ -174,7 +159,7 @@ fun DisplayList(
                         )
                     {
 
-                        Text("Kuitatut keikat", color = White)
+                        Text("Kuitatut keikat", color = White, style =  MaterialTheme.typography.body1)
                     }
                 }
             }

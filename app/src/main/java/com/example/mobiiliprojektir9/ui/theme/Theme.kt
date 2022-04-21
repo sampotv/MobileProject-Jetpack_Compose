@@ -42,6 +42,6 @@ fun MobiiliprojektiR9Theme(
         colors = colors,
         typography = Typography,
         shapes = Shapes,
-        content = content
+        content = content,
     )
 }
