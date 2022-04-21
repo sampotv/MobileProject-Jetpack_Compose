@@ -14,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -32,14 +33,14 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 
 @Composable
-fun RegisterCoordinator(navController: NavController){
+fun RegisterCoordinator(navController: NavController) {
     val context = LocalContext.current
-    var emailErrorState by remember { mutableStateOf(false)}
-    var passwordErrorState by remember { mutableStateOf(false)}
-    var passwordVisibility by remember { mutableStateOf(true)}
-    var companyErrorState by remember { mutableStateOf(false)}
-    var phoneNumErrorState by remember { mutableStateOf(false)}
-    var showLoading by remember { mutableStateOf(false)}
+    var emailErrorState by remember { mutableStateOf(false) }
+    var passwordErrorState by remember { mutableStateOf(false) }
+    var passwordVisibility by remember { mutableStateOf(true) }
+    var companyErrorState by remember { mutableStateOf(false) }
+    var phoneNumErrorState by remember { mutableStateOf(false) }
+    var showLoading by remember { mutableStateOf(false) }
 
     var emailState by remember {
         mutableStateOf("")
@@ -53,23 +54,33 @@ fun RegisterCoordinator(navController: NavController){
     var companyState by remember {
         mutableStateOf("")
     }
-        Column(
-            modifier = Modifier
-                .padding(24.dp)
-                .fillMaxSize()
-                .background(Color.White),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
-        ) {
-            Text(
-                text = "Rekisteröidy ajojärjestelijänä",
-                style = MaterialTheme.typography.h5
+    Column(
+        modifier = Modifier
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        MaterialTheme.colors.primary,
+                        MaterialTheme.colors.primaryVariant
+                    )
+                )
             )
-            Spacer(modifier = Modifier.height(24.dp))
-            OutlinedTextField(
+            .padding(24.dp)
+            .fillMaxSize(),
+
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceEvenly
+    ) {
+        Text(
+            text = "Rekisteröidy ajojärjestelijänä",
+            style = MaterialTheme.typography.h5,
+            color = Color.White
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        Box() {
+            TextField(
                 value = emailState,
                 onValueChange = {
-                    if(emailErrorState){
+                    if (emailErrorState) {
                         emailErrorState = false
                     }
                     emailState = it
@@ -80,94 +91,124 @@ fun RegisterCoordinator(navController: NavController){
                     imeAction = ImeAction.Done
                 ),
                 shape = RoundedCornerShape(8.dp),
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth(),
                 maxLines = 1,
                 label = {
                     Text("Email")
                 },
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Color.White,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent
+                )
             )
-            if(emailErrorState){
-                Text(text = "Tarkista sähköpostiosoite", color = Color.Red)
-            }
-            OutlinedTextField(
-                value = passwordState,
-                onValueChange = {
-                    if(passwordErrorState){
-                        passwordErrorState = false
-                    }
-                    passwordState = it
-                },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done
-                ),
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
-                maxLines = 1,
-                label = {Text("Salasana väh. 6 merkkiä")},
-                visualTransformation = if(passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
-                trailingIcon = {
-                    IconButton(onClick = {
-                        passwordVisibility = !passwordVisibility
-                    }){
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_visibility),
-                            contentDescription = "visibility"
-                        )
-                    }
+        }
+        if (emailErrorState) {
+            Text(text = "Tarkista sähköpostiosoite", color = Color.Red)
+        }
+        TextField(
+            value = passwordState,
+            onValueChange = {
+                if (passwordErrorState) {
+                    passwordErrorState = false
                 }
+                passwordState = it
+            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done
+            ),
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp),
+            maxLines = 1,
+            label = { Text("Salasana väh. 6 merkkiä") },
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = Color.White,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
+            ),
+            visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                IconButton(onClick = {
+                    passwordVisibility = !passwordVisibility
+                }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_visibility),
+                        contentDescription = "visibility"
+                    )
+                }
+            }
+
+        )
+        if (passwordErrorState) {
+            Text(text = "Tarkista salasana", color = Color.Red)
+        }
+        TextField(
+            value = phonenumState,
+            onValueChange = {
+                if (phoneNumErrorState) {
+                    phoneNumErrorState = false
+                }
+                phonenumState = it
+            },
+            isError = phoneNumErrorState,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done
+            ),
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp),
+            label = {
+                Text("Puhelinnumero")
+            },
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = Color.White,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
             )
-            if(passwordErrorState){
-                Text(text = "Tarkista salasana", color = Color.Red)
-            }
-            OutlinedTextField(
-                value = phonenumState,
-                onValueChange = {
-                    if(phoneNumErrorState){
-                        phoneNumErrorState = false
-                    }
-                    phonenumState = it
-                },
-                isError = phoneNumErrorState,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done
-                ),
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
-                label = {
-                    Text("Puhelinnumero")
-                },
+        )
+        if (phoneNumErrorState) {
+            Text(text = "Tarkista puhelinnumero", color = Color.Red)
+        }
+        TextField(
+            value = companyState,
+            onValueChange = {
+                if (companyErrorState) {
+                    companyErrorState = false
+                }
+                companyState = it
+            },
+            isError = companyErrorState,
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done
+            ),
+            shape = RoundedCornerShape(8.dp),
+            label = {
+                Text("Yritys")
+            },
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = Color.White,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
             )
-            if(phoneNumErrorState){
-                Text(text = "Tarkista puhelinnumero", color = Color.Red)
-            }
-            OutlinedTextField(
-                value = companyState,
-                onValueChange = {
-                    if(companyErrorState){
-                        companyErrorState = false
-                    }
-                    companyState = it
-                },
-                isError = companyErrorState,
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Done
-                ),
-                label = {
-                    Text("Yritys")
-                },
-            )
-            if(companyErrorState){
-                Text(text = "Tarkista yritys", color = Color.Red)
-            }
-            if(showLoading)
-            {
-                LoadingAnimation()
-            }
-            Spacer(modifier = Modifier.height(24.dp))
-            Button(onClick = {
+        )
+        if (companyErrorState) {
+            Text(text = "Tarkista yritys", color = Color.Red)
+        }
+        if (showLoading) {
+            LoadingAnimation()
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+        Button(
+            shape = MaterialTheme.shapes.large,
+            modifier = Modifier.size(220.dp, 50.dp),
+            onClick = {
                 when {
                     emailState.isEmpty() -> {
                         emailErrorState = true
@@ -198,14 +239,15 @@ fun RegisterCoordinator(navController: NavController){
                             setEmailErrorState = { emailErrorState = it },
                             phonenumState,
                             companyState,
-                            setLoadingAnimation = {showLoading = it}
+                            setLoadingAnimation = { showLoading = it }
                         )
                     }
                 }
-            }) {
-                Text("Rekisteröidy")
-            }
+            },
+        ) {
+            Text("Rekisteröidy")
         }
+    }
 }
 
 private fun saveCoordinatorData(
@@ -213,7 +255,7 @@ private fun saveCoordinatorData(
     context: Context,
     user: FirebaseUser,
     navController: NavController,
-    setLoadingAnimation: (Boolean) -> Unit
+    setLoadingAnimation: (Boolean) -> Unit,
 ) {
     val userId = coordinatorData.coordinatorId
     val db = FirebaseFirestore.getInstance()
@@ -229,12 +271,13 @@ private fun saveCoordinatorData(
         .addOnFailureListener { e ->
             setLoadingAnimation(false)
             Log.w(ControlsProviderService.TAG, "Error adding document", e)
-            user.delete().addOnCompleteListener{task ->
-                if(task.isSuccessful){
+            user.delete().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
                     Log.d(ControlsProviderService.TAG, "User account deleted")
                 }
             }
-            Toast.makeText(context, "Tallettaminen tietokantaan epäonnistui", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Tallettaminen tietokantaan epäonnistui", Toast.LENGTH_SHORT)
+                .show()
         }
 }
 
@@ -247,7 +290,7 @@ private fun coordinatorRegister(
     setEmailErrorState: (Boolean) -> Unit,
     registerPhoneNum: String,
     registerCompany: String,
-    setLoadingAnimation: (Boolean) -> Unit
+    setLoadingAnimation: (Boolean) -> Unit,
 ) {
     val auth: FirebaseAuth = FirebaseAuth.getInstance()
     Log.d("auth", "create user")
@@ -266,19 +309,22 @@ private fun coordinatorRegister(
                     phoneNum = registerPhoneNum
                     company = registerCompany
                 }
-                saveCoordinatorData(coordinatorData, context, user, navController, setLoadingAnimation)
+                saveCoordinatorData(coordinatorData,
+                    context,
+                    user,
+                    navController,
+                    setLoadingAnimation)
             }
 
         } else {
             setLoadingAnimation(false)
             Log.d("AUTH", "Failed: ${task.exception}")
             Toast.makeText(context, "${task.exception}", Toast.LENGTH_SHORT).show()
-            if(task.exception.toString() == "com.google.firebase.auth.FirebaseAuthWeakPasswordException: The given password is invalid. [ Password should be at least 6 characters ]"){
+            if (task.exception.toString() == "com.google.firebase.auth.FirebaseAuthWeakPasswordException: The given password is invalid. [ Password should be at least 6 characters ]") {
                 setPasswordErrorState(true)
-            }
-            else if(task.exception.toString() == "com.google.firebase.auth.FirebaseAuthInvalidCredentialsException: The email address is badly formatted."
-                || task.exception.toString() =="com.google.firebase.auth.FirebaseAuthUserCollisionException: The email address is already in use by another account.")
-                {
+            } else if (task.exception.toString() == "com.google.firebase.auth.FirebaseAuthInvalidCredentialsException: The email address is badly formatted."
+                || task.exception.toString() == "com.google.firebase.auth.FirebaseAuthUserCollisionException: The email address is already in use by another account."
+            ) {
                 setEmailErrorState(true)
             }
         }

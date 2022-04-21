@@ -125,7 +125,7 @@ fun DisplayList(
 
     Scaffold(
         topBar = {
-                 TopBar(navController)
+            TopBar(navController)
         },
         content = {
             Column(verticalArrangement = Arrangement.SpaceEvenly,
@@ -156,6 +156,7 @@ fun DisplayList(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceEvenly) {
                     Button(onClick = { navController.navigate("${Screens.OpenOrders.route}/${userId}") },
+                        shape = MaterialTheme.shapes.medium,
                         modifier = Modifier
                             .padding(bottom = 10.dp)
                             .height(70.dp)
@@ -165,10 +166,13 @@ fun DisplayList(
                     }
 
                     Button(onClick = { navController.navigate("${Screens.JobHistory.route}/${userId}") },
+                        shape = MaterialTheme.shapes.medium,
                         modifier = Modifier
                             .padding(bottom = 10.dp)
                             .height(70.dp)
-                            .width(200.dp)) {
+                            .width(200.dp),
+                        )
+                    {
 
                         Text("Kuitatut keikat", color = White)
                     }

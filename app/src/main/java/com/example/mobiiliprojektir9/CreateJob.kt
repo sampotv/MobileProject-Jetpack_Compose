@@ -57,8 +57,8 @@ fun CreateJob(navController: NavController, userId: String?) {
     var mista by rememberSaveable { mutableStateOf("") } //ei tallenna statea jonkun takia ?
     var mihin by rememberSaveable { mutableStateOf("") }
     var selite by rememberSaveable { mutableStateOf("") }
-    var jobCreated by rememberSaveable {mutableStateOf(false)}
-    if(jobCreated){
+    var jobCreated by rememberSaveable { mutableStateOf(false) }
+    if (jobCreated) {
         mista = ""
         mihin = ""
         selite = ""
@@ -161,7 +161,8 @@ fun CreateJob(navController: NavController, userId: String?) {
                     },
                     modifier = Modifier
                         .width(140.dp)
-                        .height(50.dp)
+                        .height(50.dp),
+                    shape = MaterialTheme.shapes.medium
                 ) {
                     Text(text = "Luo uusi keikka", textAlign = TextAlign.Center)
                 }
@@ -177,7 +178,8 @@ fun CreateJob(navController: NavController, userId: String?) {
                         },
                         modifier = Modifier
                             .width(140.dp)
-                            .height(50.dp)
+                            .height(50.dp),
+                        shape = MaterialTheme.shapes.medium
                     ) {
                         Text(text = "Avoimet keikat", textAlign = TextAlign.Center)
                     }
@@ -187,7 +189,8 @@ fun CreateJob(navController: NavController, userId: String?) {
                         },
                         modifier = Modifier
                             .width(140.dp)
-                            .height(50.dp)
+                            .height(50.dp),
+                        shape = MaterialTheme.shapes.medium
                     ) {
                         Text(text = "Kuitatut keikat", textAlign = TextAlign.Center)
                     }

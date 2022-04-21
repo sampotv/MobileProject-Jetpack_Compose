@@ -3,22 +3,14 @@ package com.example.mobiiliprojektir9
 import android.content.ContentValues.TAG
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -64,7 +56,7 @@ fun Login(navController: NavController, auth: FirebaseAuth) {
     {
         Spacer(modifier = Modifier.padding(20.dp))
         Logo()
-        Spacer(modifier = Modifier.padding(20.dp))
+        Spacer(modifier = Modifier.padding(10.dp))
         Text(text = "Kirjaudu sisään", fontSize = 20.sp, color = Color.White)
         Spacer(modifier = Modifier.padding(5.dp))
         TextField(
@@ -75,8 +67,12 @@ fun Login(navController: NavController, auth: FirebaseAuth) {
                 .width(300.dp)
                 .wrapContentHeight(align = Alignment.CenterVertically),
             maxLines = 1,
+            shape = MaterialTheme.shapes.large,
             colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color(0xFFFFFFFFFF)
+                backgroundColor = Color.White,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
             )
         )
 
@@ -99,8 +95,12 @@ fun Login(navController: NavController, auth: FirebaseAuth) {
 
                 }
             },
+            shape = MaterialTheme.shapes.large,
             colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color(0xFFFFFFFFFF)
+                backgroundColor = Color.White,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
             )
         )
         if (showLoading.value) {
@@ -108,6 +108,7 @@ fun Login(navController: NavController, auth: FirebaseAuth) {
         }
         Spacer(modifier = Modifier.padding(10.dp))
         Button(
+            shape = MaterialTheme.shapes.medium,
             onClick = {
                 showLoading.value = true
                 if (email.isEmpty() || password.isEmpty()) {
@@ -161,7 +162,9 @@ fun Login(navController: NavController, auth: FirebaseAuth) {
         }
         Spacer(modifier = Modifier.padding(5.dp))
         Text("Uusi käyttäjä? Rekisteröidy täältä!")
-        Button(onClick = { navController.navigate(route = Screens.RegisterAs.route) }) {
+        Button(shape = MaterialTheme.shapes.medium,
+            modifier = Modifier.size(220.dp, 50.dp),
+            onClick = { navController.navigate(route = Screens.RegisterAs.route) }) {
             Text("Rekisteröidy")
         }
     }
