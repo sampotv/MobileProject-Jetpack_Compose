@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -36,18 +37,17 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 
 
-
 @Composable
 fun RegisterDriver(navController: NavController) {
     val context = LocalContext.current
-    var emailErrorState by remember { mutableStateOf(false)}
-    var passwordErrorState by remember { mutableStateOf(false)}
-    var passwordVisibility by remember { mutableStateOf(true)}
-    var companyErrorState by remember { mutableStateOf(false)}
-    var phoneNumErrorState by remember { mutableStateOf(false)}
-    var showLoading by remember { mutableStateOf(false)}
-    var companies by remember { mutableStateOf(mutableListOf<String>())}
-    getCompanies(setCompanies = {companies = it})
+    var emailErrorState by remember { mutableStateOf(false) }
+    var passwordErrorState by remember { mutableStateOf(false) }
+    var passwordVisibility by remember { mutableStateOf(true) }
+    var companyErrorState by remember { mutableStateOf(false) }
+    var phoneNumErrorState by remember { mutableStateOf(false) }
+    var showLoading by remember { mutableStateOf(false) }
+    var companies by remember { mutableStateOf(mutableListOf<String>()) }
+    getCompanies(setCompanies = { companies = it })
 
 
     var emailState by remember {
@@ -65,21 +65,29 @@ fun RegisterDriver(navController: NavController) {
 
     Column(
         modifier = Modifier
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        MaterialTheme.colors.primary,
+                        MaterialTheme.colors.primaryVariant
+                    )
+                )
+            )
             .padding(24.dp)
-            .fillMaxSize()
-            .background(Color.White),
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
+        verticalArrangement = Arrangement.SpaceEvenly
     ) {
         Text(
             text = "Rekisteröidy kuljettajana",
-            style = MaterialTheme.typography.h5
+            style = MaterialTheme.typography.h5,
+            color = Color.White
         )
         Spacer(modifier = Modifier.height(24.dp))
-        OutlinedTextField(
+        TextField(
             value = emailState,
             onValueChange = {
-                if (emailErrorState){
+                if (emailErrorState) {
                     emailErrorState = false
                 }
                 emailState = it
@@ -95,14 +103,20 @@ fun RegisterDriver(navController: NavController) {
             label = {
                 Text("Sähköpostiosoite")
             },
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = Color.White,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
+            )
         )
-        if(emailErrorState){
+        if (emailErrorState) {
             Text(text = "Tarkista sähköpostiosoite", color = Color.Red)
         }
-        OutlinedTextField(
+        TextField(
             value = passwordState,
             onValueChange = {
-                if(passwordErrorState) {
+                if (passwordErrorState) {
                     passwordErrorState = false
                 }
                 passwordState = it
@@ -120,21 +134,27 @@ fun RegisterDriver(navController: NavController) {
             trailingIcon = {
                 IconButton(onClick = {
                     passwordVisibility = !passwordVisibility
-                }){
+                }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_baseline_visibility),
                         contentDescription = "visibility"
                     )
                 }
-            }
+            },
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = Color.White,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
+            )
         )
-        if(passwordErrorState) {
+        if (passwordErrorState) {
             Text(text = "Tarkista salasana", color = Color.Red)
         }
-        OutlinedTextField(
+        TextField(
             value = phoneNumState,
             onValueChange = {
-                if(phoneNumErrorState){
+                if (phoneNumErrorState) {
                     phoneNumErrorState = false
                 }
                 phoneNumState = it
@@ -149,55 +169,61 @@ fun RegisterDriver(navController: NavController) {
             label = {
                 Text("Puhelinnumero")
             },
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = Color.White,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
+            )
         )
-        if(phoneNumErrorState){
+        if (phoneNumErrorState) {
             Text(text = "Tarkista puhelinnumero", color = Color.Red)
         }
-        DropDownMenuCompanies(companies, setCompanyState = {companyState = it})
-        if(companyErrorState){
+        DropDownMenuCompanies(companies, setCompanyState = { companyState = it })
+        if (companyErrorState) {
             Text(text = "Valitse yritys", color = Color.Red)
         }
-        if(showLoading)
-        {
+        if (showLoading) {
             LoadingAnimation()
         }
         Spacer(modifier = Modifier.height(24.dp))
-        Button(onClick = {
-            when{
-                emailState.isEmpty() -> {
-                    emailErrorState = true
-                }
-                passwordState.isEmpty() -> {
-                    passwordErrorState = true
-                }
-                companyState.isEmpty() -> {
-                    companyErrorState = true
-                }
-                phoneNumState.isEmpty() -> {
-                    phoneNumErrorState = true
-                }
-                else -> {
-                    passwordErrorState = false
-                    emailErrorState = false
-                    companyErrorState = false
-                    phoneNumErrorState = false
+        Button(modifier = Modifier.size(220.dp, 50.dp),
+            onClick = {
+                when {
+                    emailState.isEmpty() -> {
+                        emailErrorState = true
+                    }
+                    passwordState.isEmpty() -> {
+                        passwordErrorState = true
+                    }
+                    companyState.isEmpty() -> {
+                        companyErrorState = true
+                    }
+                    phoneNumState.isEmpty() -> {
+                        phoneNumErrorState = true
+                    }
+                    else -> {
+                        passwordErrorState = false
+                        emailErrorState = false
+                        companyErrorState = false
+                        phoneNumErrorState = false
 
-                    showLoading = true
+                        showLoading = true
 
-                    driverRegister(
-                        navController,
-                        context,
-                        passwordState,
-                        setPasswordErrorState = {passwordErrorState = it},
-                        emailState,
-                        setEmailErrorState = {emailErrorState = it},
-                        phoneNumState,
-                        companyState,
-                        setLoadingAnimation = {showLoading = it}
-                    )
+                        driverRegister(
+                            navController,
+                            context,
+                            passwordState,
+                            setPasswordErrorState = { passwordErrorState = it },
+                            emailState,
+                            setEmailErrorState = { emailErrorState = it },
+                            phoneNumState,
+                            companyState,
+                            setLoadingAnimation = { showLoading = it }
+                        )
+                    }
                 }
-            }
-        }) {
+            }) {
             Text("Rekisteröidy")
         }
     }
@@ -205,15 +231,15 @@ fun RegisterDriver(navController: NavController) {
 
 
 fun getCompanies(
-    setCompanies: (MutableList<String>) -> Unit
-){
+    setCompanies: (MutableList<String>) -> Unit,
+) {
     val db = FirebaseFirestore.getInstance()
     val companyList = mutableListOf<String>()
     var newList: MutableList<String>
     db.collection("coordinator")
         .get()
         .addOnSuccessListener { documents ->
-            for(document in documents){
+            for (document in documents) {
                 val data = document.toObject<CoordinatorData>()
                 companyList.add(data.company)
             }
@@ -222,28 +248,28 @@ fun getCompanies(
             setCompanies(newList)
 
         }
-        .addOnFailureListener{ e -> Log.w("getCompanies", "failed with ", e)}
+        .addOnFailureListener { e -> Log.w("getCompanies", "failed with ", e) }
 }
 
 @Composable
 fun DropDownMenuCompanies(
     companies: MutableList<String>,
-    setCompanyState: (String) -> Unit
-){
+    setCompanyState: (String) -> Unit,
+) {
     Log.d("dropdownmenu", "$companies")
-    var expanded by remember { mutableStateOf(false)}
-    var textFieldSize by remember { mutableStateOf(Size.Zero)}
-    var company by remember { mutableStateOf("")}
+    var expanded by remember { mutableStateOf(false) }
+    var textFieldSize by remember { mutableStateOf(Size.Zero) }
+    var company by remember { mutableStateOf("") }
 
-    val icon = if(expanded){
+    val icon = if (expanded) {
         Icons.Filled.KeyboardArrowUp
     } else {
         Icons.Filled.KeyboardArrowDown
     }
 
-    Column(modifier = Modifier.padding(20.dp)){
+    Column(modifier = Modifier.padding(20.dp)) {
 
-        OutlinedTextField(
+        TextField(
             value = company,
             onValueChange = {},
             modifier = Modifier
@@ -251,16 +277,23 @@ fun DropDownMenuCompanies(
                 .onGloballyPositioned { coordinates ->
                     textFieldSize = coordinates.size.toSize()
                 },
-            label = {Text(text = "Valitse yritys")},
+            label = { Text(text = "Valitse yritys") },
             trailingIcon = {
                 Icon(icon, "", Modifier.clickable { expanded = !expanded })
-            }
+            },
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = Color.White,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
+            )
+
         )
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
             modifier = Modifier
-                .width(with(LocalDensity.current){textFieldSize.width.toDp()})
+                .width(with(LocalDensity.current) { textFieldSize.width.toDp() })
         ) {
             companies.forEach { item ->
                 DropdownMenuItem(onClick = {
@@ -280,7 +313,7 @@ private fun saveDriverData(
     context: Context,
     user: FirebaseUser,
     navController: NavController,
-    setLoadingAnimation: (Boolean) -> Unit
+    setLoadingAnimation: (Boolean) -> Unit,
 ) {
     val db = FirebaseFirestore.getInstance()
     val userId = driverData.driverId
@@ -297,15 +330,15 @@ private fun saveDriverData(
         .addOnFailureListener { e ->
             setLoadingAnimation(false)
             Log.w("SaveDriverData", "Error adding document", e)
-            user.delete().addOnCompleteListener{task ->
-                if(task.isSuccessful){
+            user.delete().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
                     Log.d(TAG, "User account deleted")
                 }
             }
-            Toast.makeText(context, "Tallettaminen tietokantaan epäonnistui", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Tallettaminen tietokantaan epäonnistui", Toast.LENGTH_SHORT)
+                .show()
         }
 }
-
 
 
 private fun driverRegister(
@@ -317,7 +350,7 @@ private fun driverRegister(
     setEmailErrorState: (Boolean) -> Unit,
     registerPhoneNum: String,
     registerCompany: String,
-    setLoadingAnimation: (Boolean) -> Unit
+    setLoadingAnimation: (Boolean) -> Unit,
 ) {
     val auth: FirebaseAuth = FirebaseAuth.getInstance()
     Log.d("auth", "create user")
@@ -349,17 +382,17 @@ private fun driverRegister(
             setLoadingAnimation(false)
             Log.d("AUTH", "Failed: ${task.exception}")
             Toast.makeText(context, "${task.exception}", Toast.LENGTH_SHORT).show()
-            if(task.exception.toString() == "com.google.firebase.auth.FirebaseAuthWeakPasswordException: The given password is invalid. [ Password should be at least 6 characters ]"){
+            if (task.exception.toString() == "com.google.firebase.auth.FirebaseAuthWeakPasswordException: The given password is invalid. [ Password should be at least 6 characters ]") {
                 setPasswordErrorState(true)
-            }
-            else if(task.exception.toString() == "com.google.firebase.auth.FirebaseAuthInvalidCredentialsException: The email address is badly formatted."
-                || task.exception.toString() =="com.google.firebase.auth.FirebaseAuthUserCollisionException: The email address is already in use by another account.")
-                {
+            } else if (task.exception.toString() == "com.google.firebase.auth.FirebaseAuthInvalidCredentialsException: The email address is badly formatted."
+                || task.exception.toString() == "com.google.firebase.auth.FirebaseAuthUserCollisionException: The email address is already in use by another account."
+            ) {
                 setEmailErrorState(true)
             }
         }
     }
 }
+
 
 //@Preview()
 //@Composable
