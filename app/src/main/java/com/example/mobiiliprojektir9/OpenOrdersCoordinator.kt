@@ -150,7 +150,7 @@ private fun OrderRow(
                         reserveJob(job.order_id, selectedDriver, db, context, onJobReserved)
                     }
                 ) {
-                    Text(text = "Varaa keikka kuljettajalle")
+                    Text(text = "Varaa keikka kuljettajalle", style = MaterialTheme.typography.body1)
                 }
             }
         }

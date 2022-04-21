@@ -48,7 +48,7 @@ private val logoTheme = defaultShimmerTheme.copy(
 @Composable
 fun Logo() {
 
-    val ColorString = "#E8E8E8"
+    val colorString = "#E8E8E8"
     CompositionLocalProvider(
         LocalShimmerTheme provides logoTheme
     ) {
@@ -56,7 +56,7 @@ fun Logo() {
             modifier = Modifier
                 .size(100.dp)
                 .clip(CircleShape)
-                .background(Color(ColorString.toColorInt()))
+                .background(Color(colorString.toColorInt()))
                 .shimmer(),
             contentAlignment = Alignment.Center
 

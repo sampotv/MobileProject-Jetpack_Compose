@@ -37,7 +37,7 @@ fun RegisterCoordinator(navController: NavController) {
     val context = LocalContext.current
     var emailErrorState by remember { mutableStateOf(false) }
     var passwordErrorState by remember { mutableStateOf(false) }
-    var passwordVisibility by remember { mutableStateOf(true) }
+    var passwordVisibility by remember { mutableStateOf(false) }
     var companyErrorState by remember { mutableStateOf(false) }
     var phoneNumErrorState by remember { mutableStateOf(false) }
     var showLoading by remember { mutableStateOf(false) }
