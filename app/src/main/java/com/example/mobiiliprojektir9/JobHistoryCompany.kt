@@ -145,20 +145,14 @@ fun getClosedOrdersCompany(db: FirebaseFirestore, setJobs: (MutableList<Order>) 
 }
 
 private fun getCompany(userId: String?, db: FirebaseFirestore, setCompanyState: (String) -> Unit) {
-    Log.d("testi", "tei")
-    //var coordinatorId = "e1rne4WYcTWL0LBgVqfrW7CxyE72"
-
     db.collection("coordinator").whereEqualTo("coordinatorId", userId)
-
         .get()
         .addOnSuccessListener { documents ->
             for(document in documents){
-
                 val data = document.toObject<CoordinatorData>()
                 val company = data.company
                 Log.d("getCompany Success", company)
                 setCompanyState(company)
-                Log.d("testi", company)
             }
         }
         .addOnFailureListener{ exception ->
