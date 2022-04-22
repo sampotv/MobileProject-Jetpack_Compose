@@ -46,6 +46,8 @@ android {
 }
 
 dependencies {
+    implementation 'com.valentinilk.shimmer:compose-shimmer:1.0.0'
+
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0")
     implementation platform('com.google.firebase:firebase-bom:29.2.1')
     implementation 'com.google.firebase:firebase-firestore-ktx'

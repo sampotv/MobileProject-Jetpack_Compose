@@ -29,6 +29,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobiiliprojektir9.Order
 import com.example.mobiiliprojektir9.Screens
+import com.example.mobiiliprojektir9.TopBar
 import com.example.mobiiliprojektir9.getStringTimeStampWithDate
 import com.example.mobiiliprojektir9.ui.theme.LogOut
 import com.google.firebase.auth.FirebaseAuth
@@ -57,7 +58,6 @@ data class ListItem(val name: String)
 
 @Composable
 fun DriverSite(navController: NavController, userId: String?, auth: FirebaseAuth){
-//    val userIdTest = "PPQH4E4bLIfORaMH9p30GkEQlQs2"
     val items = getListItems(userId)
     DisplayList(items, navController, userId, auth)
 }
@@ -112,18 +112,17 @@ private fun getListItems(userId: String?): MutableList<Order>{
 }
 
 @Composable
-fun DisplayList(items: MutableList<Order>, navController: NavController, userId: String?, auth: FirebaseAuth) {
+fun DisplayList(
+    items: MutableList<Order>,
+    navController: NavController,
+    userId: String?,
+    auth: FirebaseAuth
+) {
     var selectedId by rememberSaveable { mutableStateOf("")}
     Log.d("DisplayList", "$userId")
     
     Scaffold(
-        topBar = { TopAppBar(
-            elevation = 4.dp,
-            title = {Text(text = "Omat keikat")},
-            actions = {
-                LogOut(navController)
-            }
-        )
+        topBar = { TopBar(navController)
         },
         content = {
             Column(verticalArrangement = Arrangement.SpaceEvenly,
@@ -148,29 +147,29 @@ fun DisplayList(items: MutableList<Order>, navController: NavController, userId:
                         }
                     }
                 }
-                //OpenJobs(navController, userId)
                 Column(modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                    horizontalAlignment = Alignment.CenterHorizontally){
-                    Button(onClick = { navController.navigate("${Screens.OpenOrders.route}/${userId}") }, colors = ButtonDefaults.textButtonColors(
-                        backgroundColor = Color.Blue
-                    ), modifier = Modifier
-                        .padding(bottom = 10.dp)
-                        .height(80.dp)
-                        .width(200.dp)) {
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceEvenly){
+                    Button(onClick = { navController.navigate("${Screens.OpenOrders.route}/${userId}") },
+                        shape = MaterialTheme.shapes.medium,
+                        modifier = Modifier
+                            .padding(bottom = 10.dp)
+                            .height(70.dp)
+                            .width(200.dp)) {
 
-                        Text("View open jobs", color = White)
+                        Text("Avoimet keikat", color = White, style =  MaterialTheme.typography.body1)
                     }
 
-                    Button(onClick = { navController.navigate("${Screens.JobHistory.route}/${userId}")}, colors = ButtonDefaults.textButtonColors(
-                        backgroundColor = Color.Blue
-                    ), modifier = Modifier
-                        .padding(bottom = 10.dp)
-                        .width(200.dp)
-                        .height(80.dp)) {
+                    Button(onClick = { navController.navigate("${Screens.JobHistory.route}/${userId}")},
+                         shape = MaterialTheme.shapes.medium,
+                         modifier = Modifier
+                             .padding(bottom = 10.dp)
+                             .height(70.dp)
+                             .width(200.dp)) {
 
-                        Text("View completed jobs", color = White)
+                        Text("Kuitatut keikat", color = White, style =  MaterialTheme.typography.body1)
                     }
                 }
             }
@@ -200,37 +199,6 @@ fun ItemRow(item: Order, modifier: Modifier){
         }
 }
 }
-
-//@Composable
-//fun OpenJobs(navController: NavController, userId: String?){
-//    Log.d("OpenJobs", "$userId")
-//    Column(modifier = Modifier.fillMaxWidth(),
-//        horizontalAlignment = Alignment.CenterHorizontally){
-//
-//        Button(onClick = { navController.navigate("${Screens.OpenOrders.route}/${userId}") }, colors = ButtonDefaults.textButtonColors(
-//            backgroundColor = Color.Blue
-//        ), modifier = Modifier
-//            .height(100.dp)
-//            .width(200.dp)
-//            .padding(bottom = 20.dp)) {
-//
-//            Text("View open jobs", color = White)
-//
-//        }
-//
-//        Button(onClick = { navController.navigate("${Screens.JobHistory.route}/${userId}")}, colors = ButtonDefaults.textButtonColors(
-//            backgroundColor = Color.Blue
-//        ), modifier = Modifier
-//            .padding(bottom = 20.dp)
-//            .width(200.dp)
-//            .height(100.dp)) {
-//
-//            Text("View completed jobs", color = White)
-//
-//        }
-//
-//    }
-//}
 
 @Preview(showBackground = true)
 @Composable

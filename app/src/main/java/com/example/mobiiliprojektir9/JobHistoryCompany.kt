@@ -129,6 +129,7 @@ fun ClosedOrderCompanyRow(job: Order, modifier: Modifier, onShowImage: (Boolean)
             Text("Ajettu: " + job.time_delivered?.toDate()?.getStringTimeStampWithDate3())
         }
         Button(onClick = {
+            Log.d("imageUrl", job.imageUrl)
             setImageUrl(job.imageUrl)
             onShowImage(true) },
             modifier = Modifier.padding(top = 3.dp)

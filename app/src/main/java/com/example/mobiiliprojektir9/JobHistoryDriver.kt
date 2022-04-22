@@ -4,18 +4,15 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.Divider
-import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberImagePainter
 import com.example.mobiiliprojektir9.ui.theme.LogOut
 import com.example.mobiiliprojektir9.ui.theme.MobiiliprojektiR9Theme
 import com.google.firebase.auth.FirebaseAuth
@@ -41,7 +39,12 @@ fun ClosedDeliveries(
 
 ){
     val db = FirebaseFirestore.getInstance()
-    val jobs = getClosedOrders( userId, db  )
+    var companyState by remember { mutableStateOf("")}
+    getCompany(userId, db, setCompanyState = {companyState = it})
+    var jobs by remember { mutableStateOf(mutableListOf<Order>())}
+    getClosedOrdersDriver(db, userId, setJobs = { jobs = it}, companyState)
+    var showImage by remember { mutableStateOf(false)}
+    var imageUrl by remember { mutableStateOf("")}
     Column(
         modifier = Modifier
             .padding(24.dp)
@@ -50,7 +53,6 @@ fun ClosedDeliveries(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ){
-        //OpenDeliveries(auth = auth, navController = navController)
         Text(
             text = "Ajetut keikat",
             style = MaterialTheme.typography.h5
@@ -65,14 +67,39 @@ fun ClosedDeliveries(
             items(jobs){job ->
                 ClosedOrderRow(
                     job,
-                    Modifier.fillParentMaxWidth()
+                    Modifier.fillParentMaxWidth(),
+                    onShowImage = {showImage = it},
+                    setImageUrl = {imageUrl = it}
+                )
+            }
+        }
+        if(showImage){
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ){
+                IconButton(
+                    onClick = { showImage = false },
+                    modifier = Modifier.align(Alignment.TopEnd)
+                ) {
+                    Icon(imageVector = Icons.Default.Close, contentDescription = null)
+                }
+                Image(
+                    painter = rememberImagePainter(imageUrl),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize()
                 )
             }
         }
     }
 }
+
 @Composable
-fun ClosedOrderRow(job: Order, modifier: Modifier){
+fun ClosedOrderRow(
+    job: Order,
+    modifier: Modifier,
+    onShowImage: (Boolean) -> Unit,
+    setImageUrl: (String) -> Unit
+){
     Column(
         modifier
             .padding(8.dp, top = 20.dp)
@@ -92,6 +119,14 @@ fun ClosedOrderRow(job: Order, modifier: Modifier){
             Text("Luotu: " + job.time_created?.toDate()?.getStringTimeStampWithDate2())
             Text("Ajettu: " + job.time_delivered?.toDate()?.getStringTimeStampWithDate2())
         }
+        Button(onClick = {
+            Log.d("imageUrl", job.imageUrl)
+            setImageUrl(job.imageUrl)
+            onShowImage(true) },
+            modifier = Modifier.padding(top = 3.dp)
+        ) {
+            Text(text = "Näytä rahtikirja")
+        }
     }
 }
 
@@ -100,30 +135,49 @@ fun Date.getStringTimeStampWithDate2(): String {
     return dateFormat.format(this)
 }
 
-fun getClosedOrders(userId: String?, db: FirebaseFirestore ): MutableList<Order>{
-    Log.d("function", "getOpenOrders")
-    var jobs =  mutableStateListOf<Order>()
-    //var userId ="PPQH4E4bLIfORaMH9p30GkEQlQs2" //testausta varten
+@Composable
+fun getClosedOrdersDriver(
+    db: FirebaseFirestore,
+    userId: String?,
+    setJobs: (MutableList<Order>) -> Unit,
+    company: String
+){
+    var jobs by remember { mutableStateOf(mutableListOf<Order>())}
+    //var compa = getCompany(userId , db )
+
     db.collection("Jobs")
-        .whereEqualTo("driver_id", userId)
         .whereEqualTo("state", "closed")
+        .whereEqualTo("driver_id", userId)
         .orderBy("time_delivered", Query.Direction.ASCENDING)
         .get()
         .addOnSuccessListener { documents ->
             for (document in documents){
                 var order = document.toObject<Order>()
-                val time = order.time_created?.toDate()
                 jobs.add(order)
                 Log.d("getClosedOrders ", "${document.id} => ${document.data}")
-                Log.d("order time ", "$time")
-                //Log.d("order time ", "$formattedDate")
+                setJobs(jobs)
+                Log.d("getClosedOrders", jobs.toString())
             }
         }
         .addOnFailureListener{ exception ->
             Log.w("Failed, ", "Error getting document: ", exception)
         }
-    Log.d("jobs ", "$jobs")
-    return jobs
+}
+
+private fun getCompany(userId: String?, db: FirebaseFirestore, setCompanyState: (String) -> Unit) {
+    db.collection("driver").whereEqualTo("DriverId", userId)
+        .get()
+        .addOnSuccessListener { documents ->
+            for(document in documents){
+                val data = document.toObject<DriverData>()
+                val company = data.company
+                Log.d("getCompany Success", company)
+                setCompanyState(company)
+            }
+        }
+        .addOnFailureListener{ exception ->
+            Log.w("Failed, ", "Error getting document: ", exception)
+        }
 }
 
 @Preview

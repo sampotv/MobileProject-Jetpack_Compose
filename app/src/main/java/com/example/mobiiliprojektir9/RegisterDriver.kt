@@ -78,6 +78,9 @@ fun RegisterDriver(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
+        Spacer(modifier = Modifier.height(20.dp))
+        Logo()
+        Spacer(modifier = Modifier.height(20.dp))
         Text(
             text = "Rekisteröidy kuljettajana",
             style = MaterialTheme.typography.h5,
