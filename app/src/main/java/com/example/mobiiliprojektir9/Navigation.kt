@@ -79,9 +79,8 @@ fun SetUpNavigation(navController : NavHostController, auth: FirebaseAuth) {
         )
         { backStackEntry ->
             CreateJob(navController = navController, backStackEntry.arguments?.getString("userId"))
-            //BackHandler(true) {
-                // Or do nothing
-            //}
+            BackHandler(true) {
+            }
         }
         composable(
             route = Screens.JobDelivered.route + "/{selectedItem}",
