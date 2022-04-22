@@ -80,6 +80,7 @@ fun SetUpNavigation(navController : NavHostController, auth: FirebaseAuth) {
         { backStackEntry ->
             CreateJob(navController = navController, backStackEntry.arguments?.getString("userId"))
             BackHandler(true) {
+
             }
         }
         composable(
