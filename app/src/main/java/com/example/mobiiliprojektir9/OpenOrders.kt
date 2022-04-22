@@ -141,7 +141,7 @@ private fun OrderRow(job: Order, modifier: Modifier){
         modifier
             .padding(8.dp, top = 20.dp)
             .border(
-                border = BorderStroke(1.dp, Color.Black),
+                border = BorderStroke(1.dp, MaterialTheme.colors.primaryVariant),
                 shape = RoundedCornerShape(8.dp)
             )
             .padding(10.dp),
@@ -229,7 +229,7 @@ private fun CustomAlertDialog(
 ){
     if(dialogState){
         AlertDialog(
-            backgroundColor = Color(0xF55398A1),
+            backgroundColor = MaterialTheme.colors.primary,
             onDismissRequest = {
                 onDismissRequest(dialogState)
             },
@@ -240,13 +240,15 @@ private fun CustomAlertDialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ){
-                    Spacer(modifier = Modifier.padding(vertical = 10.dp))
+                    Spacer(modifier = Modifier.padding(vertical = 8.dp))
 
                     Text(
                         text = "Varaa keikka",
                         fontSize = 24.sp,
-                        color = Color.Blue
+                        color = Color.White
                     )
+                    Spacer(modifier = Modifier.padding(vertical = 5.dp))
+                    TabRowDefaults.Divider(color = MaterialTheme.colors.primaryVariant, thickness = 5.dp)
                     Spacer(modifier = Modifier.padding(vertical = 10.dp))
                     Column(
                         modifier = Modifier.padding(start = 20.dp, end = 5.dp)
@@ -258,15 +260,17 @@ private fun CustomAlertDialog(
                         Text("pvm: " + selectedItem.time_created?.toDate()?.getStringTimeStampWithDate(), color = Color.White)
 
                     }
+                    Spacer(modifier = Modifier.padding(vertical = 8.dp))
+                    TabRowDefaults.Divider(color = MaterialTheme.colors.primaryVariant, thickness = 5.dp)
                     Spacer(modifier = Modifier.padding(vertical = 10.dp))
 
                     Text(
                         text = "Haluatko varata tämän keikan?",
                         fontSize = 18.sp,
-                        color = Color.Blue
+                        color = Color.White
                     )
 
-                    Spacer(modifier = Modifier.padding(vertical = 20.dp))
+                    Spacer(modifier = Modifier.padding(vertical = 15.dp))
                 }
                 Row(
                     modifier = Modifier

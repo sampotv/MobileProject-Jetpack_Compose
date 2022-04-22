@@ -21,6 +21,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.*
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobiiliprojektir9.ui.theme.MobiiliprojektiR9Theme
@@ -160,7 +161,7 @@ fun Login(navController: NavController, auth: FirebaseAuth) {
             Text("Kirjaudu sisään", style =  MaterialTheme.typography.body1)
         }
         Spacer(modifier = Modifier.padding(5.dp))
-        Text("Uusi käyttäjä? Rekisteröidy täältä!")
+        Text("Uusi käyttäjä? Rekisteröidy täältä!", color = Color.White)
         Button(
             shape = MaterialTheme.shapes.medium,
             modifier = Modifier.size(220.dp, 50.dp),

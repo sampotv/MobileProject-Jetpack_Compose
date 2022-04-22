@@ -54,48 +54,118 @@ fun RegisterCoordinator(navController: NavController) {
     var companyState by remember {
         mutableStateOf("")
     }
-    Column(
-        modifier = Modifier
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        MaterialTheme.colors.primary,
-                        MaterialTheme.colors.primaryVariant
+        Column(
+            modifier = Modifier
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            MaterialTheme.colors.primary,
+                            MaterialTheme.colors.primaryVariant
+                        )
                     )
                 )
-            )
-            .padding(24.dp)
-            .fillMaxSize(),
+                .padding(24.dp)
+                .fillMaxSize(),
 
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceEvenly
-    ) {
-        Text(
-            text = "Rekisteröidy ajojärjestelijänä",
-            style = MaterialTheme.typography.h5,
-            color = Color.White
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-        Box() {
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Spacer(modifier = Modifier.height(20.dp))
+            Logo()
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(
+                text = "Rekisteröidy ajojärjestelijänä",
+                style = MaterialTheme.typography.h5,
+                color = Color.White
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            Box() {
+                TextField(
+                    value = emailState,
+                    onValueChange = {
+                        if (emailErrorState) {
+                            emailErrorState = false
+                        }
+                        emailState = it
+                    },
+                    isError = emailErrorState,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Done
+                    ),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    maxLines = 1,
+                    label = {
+                        Text("Email")
+                    },
+                    colors = TextFieldDefaults.textFieldColors(
+                        backgroundColor = Color.White,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
+                    )
+                )
+            }
+            if(emailErrorState){
+                Text(text = "Tarkista sähköpostiosoite", color = Color.Red)
+            }
             TextField(
-                value = emailState,
+                value = passwordState,
                 onValueChange = {
-                    if (emailErrorState) {
-                        emailErrorState = false
+                    if(passwordErrorState){
+                        passwordErrorState = false
                     }
-                    emailState = it
+                    passwordState = it
                 },
-                isError = emailErrorState,
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
+                    keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done
                 ),
+                modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp),
-                modifier = Modifier
-                    .fillMaxWidth(),
                 maxLines = 1,
+                label = {Text("Salasana väh. 6 merkkiä")},
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Color.White,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent
+                ),
+                visualTransformation = if(passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+                trailingIcon = {
+                    IconButton(onClick = {
+                        passwordVisibility = !passwordVisibility
+                    }){
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_visibility),
+                            contentDescription = "visibility"
+                        )
+                    }
+                }
+
+            )
+            if(passwordErrorState){
+                Text(text = "Tarkista salasana", color = Color.Red)
+            }
+            TextField(
+                value = phonenumState,
+                onValueChange = {
+                    if(phoneNumErrorState){
+                        phoneNumErrorState = false
+                    }
+                    phonenumState = it
+                },
+                isError = phoneNumErrorState,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                ),
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp),
                 label = {
-                    Text("Email")
+                    Text("Puhelinnumero")
                 },
                 colors = TextFieldDefaults.textFieldColors(
                     backgroundColor = Color.White,
@@ -104,111 +174,44 @@ fun RegisterCoordinator(navController: NavController) {
                     disabledIndicatorColor = Color.Transparent
                 )
             )
-        }
-        if (emailErrorState) {
-            Text(text = "Tarkista sähköpostiosoite", color = Color.Red)
-        }
-        TextField(
-            value = passwordState,
-            onValueChange = {
-                if (passwordErrorState) {
-                    passwordErrorState = false
-                }
-                passwordState = it
-            },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
-            ),
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp),
-            maxLines = 1,
-            label = { Text("Salasana väh. 6 merkkiä") },
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.White,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent
-            ),
-            visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
-            trailingIcon = {
-                IconButton(onClick = {
-                    passwordVisibility = !passwordVisibility
-                }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_visibility),
-                        contentDescription = "visibility"
-                    )
-                }
+            if(phoneNumErrorState){
+                Text(text = "Tarkista puhelinnumero", color = Color.Red)
             }
-
-        )
-        if (passwordErrorState) {
-            Text(text = "Tarkista salasana", color = Color.Red)
-        }
-        TextField(
-            value = phonenumState,
-            onValueChange = {
-                if (phoneNumErrorState) {
-                    phoneNumErrorState = false
-                }
-                phonenumState = it
-            },
-            isError = phoneNumErrorState,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Done
-            ),
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp),
-            label = {
-                Text("Puhelinnumero")
-            },
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.White,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent
+            TextField(
+                value = companyState,
+                onValueChange = {
+                    if(companyErrorState){
+                        companyErrorState = false
+                    }
+                    companyState = it
+                },
+                isError = companyErrorState,
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done
+                ),
+                shape = RoundedCornerShape(8.dp),
+                label = {
+                    Text("Yritys")
+                },
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Color.White,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent
+                )
             )
-        )
-        if (phoneNumErrorState) {
-            Text(text = "Tarkista puhelinnumero", color = Color.Red)
-        }
-        TextField(
-            value = companyState,
-            onValueChange = {
-                if (companyErrorState) {
-                    companyErrorState = false
-                }
-                companyState = it
-            },
-            isError = companyErrorState,
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Done
-            ),
-            shape = RoundedCornerShape(8.dp),
-            label = {
-                Text("Yritys")
-            },
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.White,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent
-            )
-        )
-        if (companyErrorState) {
-            Text(text = "Tarkista yritys", color = Color.Red)
-        }
-        if (showLoading) {
-            LoadingAnimation()
-        }
-        Spacer(modifier = Modifier.height(24.dp))
-        Button(
-            shape = MaterialTheme.shapes.large,
-            modifier = Modifier.size(220.dp, 50.dp),
-            onClick = {
+            if(companyErrorState){
+                Text(text = "Valitse yritys", color = Color.Red)
+            }
+            if(showLoading) {
+                LoadingAnimation()
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+            Button(
+                shape = MaterialTheme.shapes.large,
+                modifier = Modifier.size(220.dp, 50.dp),
+                onClick = {
                 when {
                     emailState.isEmpty() -> {
                         emailErrorState = true
@@ -243,7 +246,7 @@ fun RegisterCoordinator(navController: NavController) {
                         )
                     }
                 }
-            },
+            }
         ) {
             Text("Rekisteröidy", style =  MaterialTheme.typography.body1)
         }

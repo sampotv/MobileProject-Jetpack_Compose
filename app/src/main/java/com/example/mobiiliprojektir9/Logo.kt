@@ -44,7 +44,6 @@ private val logoTheme = defaultShimmerTheme.copy(
     shimmerWidth = 400.dp,
 )
 
-
 @Composable
 fun Logo() {
 
@@ -68,3 +67,5 @@ fun Logo() {
 
     }
 }
+
+

@@ -6,10 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,19 +14,26 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.Divider
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
 import com.example.mobiiliprojektir9.ui.theme.LogOut
 import com.example.mobiiliprojektir9.ui.theme.MobiiliprojektiR9Theme
 import com.google.firebase.auth.FirebaseAuth
@@ -53,7 +57,8 @@ fun ClosedDeliveriesCompany(
     getCompany(userId, db, setCompanyState = { companyState = it })
     var jobs by remember { mutableStateOf(mutableListOf<Order>()) }
     getClosedOrdersCompany(db, setJobs = { jobs = it }, companyState)
-
+    var showImage by remember { mutableStateOf(false) }
+    var imageUrl by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -84,12 +89,35 @@ fun ClosedDeliveriesCompany(
                 modifier = Modifier
                     .weight(1f)
                     .padding(start = 20.dp, end = 20.dp)
-                    .clickable { }
+                //.clickable { }
             ) {
                 items(jobs) { job ->
                     ClosedOrderCompanyRow(
                         job,
-                        Modifier.fillParentMaxWidth()
+                        Modifier.fillParentMaxWidth(),
+                        onShowImage = { showImage = it },
+                        setImageUrl = { imageUrl = it }
+                    )
+                }
+            }
+            if (showImage) {
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    IconButton(
+                        onClick = { showImage = false },
+                        modifier = Modifier.align(TopEnd)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = null,
+                            tint = MaterialTheme.colors.primary
+                        )
+                    }
+                    Image(
+                        painter = rememberImagePainter(imageUrl),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize()
                     )
                 }
             }
@@ -97,12 +125,12 @@ fun ClosedDeliveriesCompany(
     }
 }
 @Composable
-fun ClosedOrderCompanyRow(job: Order, modifier: Modifier){
+fun ClosedOrderCompanyRow(job: Order, modifier: Modifier, onShowImage: (Boolean) -> Unit, setImageUrl: (String) -> Unit){
     Column(
         modifier
             .padding(8.dp, top = 20.dp)
             .border(
-                border = BorderStroke(1.dp, Color.Black),
+                border = BorderStroke(1.dp, MaterialTheme.colors.primaryVariant),
                 shape = RoundedCornerShape(8.dp)
             )
             .padding(10.dp),
@@ -117,6 +145,14 @@ fun ClosedOrderCompanyRow(job: Order, modifier: Modifier){
             Text("Luotu: " + job.time_created?.toDate()?.getStringTimeStampWithDate3())
             Text("Ajettu: " + job.time_delivered?.toDate()?.getStringTimeStampWithDate3())
         }
+        Button(onClick = {
+            Log.d("imageUrl", job.imageUrl)
+            setImageUrl(job.imageUrl)
+            onShowImage(true) },
+            modifier = Modifier.padding(top = 3.dp)
+        ) {
+            Text(text = "Näytä rahtikirja")
+        }
     }
 }
 
@@ -127,7 +163,7 @@ fun Date.getStringTimeStampWithDate3(): String {
 
 
 @Composable
-fun getClosedOrdersCompany(db: FirebaseFirestore, setJobs: (MutableList<Order>) -> Unit, company: String): MutableList<Order>{
+fun getClosedOrdersCompany(db: FirebaseFirestore, setJobs: (MutableList<Order>) -> Unit, company: String){
     var jobs by remember { mutableStateOf(mutableListOf<Order>())}
     //var compa = getCompany(userId , db )
     Log.d("function", "getClosedOrders")
@@ -154,7 +190,7 @@ fun getClosedOrdersCompany(db: FirebaseFirestore, setJobs: (MutableList<Order>) 
             Log.w("Failed, ", "Error getting document: ", exception)
         }
     Log.d("jobs ", "$jobs")
-    return jobs
+    //return jobs
 }
 
 private fun getCompany(userId: String?, db: FirebaseFirestore, setCompanyState: (String) -> Unit) {

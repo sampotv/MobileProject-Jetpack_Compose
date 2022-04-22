@@ -45,7 +45,7 @@ data class ListItem(val name: String)
 fun DriverSite(navController: NavController, userId: String?, auth: FirebaseAuth) {
 //    val userIdTest = "PPQH4E4bLIfORaMH9p30GkEQlQs2"
     val items = getListItems(userId)
-    DisplayList(items, navController, userId, auth)
+    DisplayList(items, navController, userId)
 }
 
 @Composable
@@ -78,6 +78,7 @@ private fun getListItems(userId: String?): MutableList<Order> {
     val db = FirebaseFirestore.getInstance()
     var listItems = mutableStateListOf<Order>()
 
+
     db.collection("Jobs")
         .whereEqualTo("driver_id", userId)
         .whereEqualTo("state", "reserved")
@@ -103,7 +104,6 @@ fun DisplayList(
     items: MutableList<Order>,
     navController: NavController,
     userId: String?,
-    auth: FirebaseAuth,
 ) {
     var selectedId by rememberSaveable { mutableStateOf("") }
     Log.d("DisplayList", "$userId")
@@ -150,6 +150,7 @@ fun DisplayList(
                         Text("Avoimet keikat", color = White, style =  MaterialTheme.typography.body1)
                     }
 
+
                     Button(onClick = { navController.navigate("${Screens.JobHistory.route}/${userId}") },
                         shape = MaterialTheme.shapes.medium,
                         modifier = Modifier
@@ -173,7 +174,7 @@ fun ItemRow(item: Order, modifier: Modifier) {
         modifier
             .padding(start = 15.dp, end = 10.dp, top = 20.dp)
             .border(
-                border = BorderStroke(1.dp, Color.Black),
+                border = BorderStroke(1.dp, MaterialTheme.colors.primaryVariant),
                 shape = RoundedCornerShape(8.dp)
             )
             .padding(10.dp),
@@ -190,37 +191,6 @@ fun ItemRow(item: Order, modifier: Modifier) {
         }
     }
 }
-
-//@Composable
-//fun OpenJobs(navController: NavController, userId: String?){
-//    Log.d("OpenJobs", "$userId")
-//    Column(modifier = Modifier.fillMaxWidth(),
-//        horizontalAlignment = Alignment.CenterHorizontally){
-//
-//        Button(onClick = { navController.navigate("${Screens.OpenOrders.route}/${userId}") }, colors = ButtonDefaults.textButtonColors(
-//            backgroundColor = Color.Blue
-//        ), modifier = Modifier
-//            .height(100.dp)
-//            .width(200.dp)
-//            .padding(bottom = 20.dp)) {
-//
-//            Text("View open jobs", color = White)
-//
-//        }
-//
-//        Button(onClick = { navController.navigate("${Screens.JobHistory.route}/${userId}")}, colors = ButtonDefaults.textButtonColors(
-//            backgroundColor = Color.Blue
-//        ), modifier = Modifier
-//            .padding(bottom = 20.dp)
-//            .width(200.dp)
-//            .height(100.dp)) {
-//
-//            Text("View completed jobs", color = White)
-//
-//        }
-//
-//    }
-//}
 
 @Preview(showBackground = true)
 @Composable
