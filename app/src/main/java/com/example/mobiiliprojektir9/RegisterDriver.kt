@@ -18,8 +18,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -42,7 +42,7 @@ fun RegisterDriver(navController: NavController) {
     val context = LocalContext.current
     var emailErrorState by remember { mutableStateOf(false) }
     var passwordErrorState by remember { mutableStateOf(false) }
-    var passwordVisibility by remember { mutableStateOf(true) }
+    var passwordVisibility by remember { mutableStateOf(false) }
     var companyErrorState by remember { mutableStateOf(false) }
     var phoneNumErrorState by remember { mutableStateOf(false) }
     var showLoading by remember { mutableStateOf(false) }
@@ -227,7 +227,7 @@ fun RegisterDriver(navController: NavController) {
                     }
                 }
             }) {
-            Text("Rekisteröidy")
+            Text("Rekisteröidy", style =  MaterialTheme.typography.body1)
         }
     }
 }
@@ -281,6 +281,7 @@ fun DropDownMenuCompanies(
                     textFieldSize = coordinates.size.toSize()
                 },
             shape = RoundedCornerShape(8.dp),
+
             label = { Text(text = "Valitse yritys") },
             trailingIcon = {
                 Icon(icon, "", Modifier.clickable { expanded = !expanded })

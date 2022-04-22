@@ -41,25 +41,11 @@ import java.util.*
 
 data class ListItem(val name: String)
 
-//class MainActivity : ComponentActivity() {
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContent {
-//
-//            Surface(color = MaterialTheme.colors.background) {
-//                DisplayList(items = listItems)
-//            }
-//
-//
-//        }
-//
-//    }
-//}
-
 @Composable
-fun DriverSite(navController: NavController, userId: String?, auth: FirebaseAuth){
+fun DriverSite(navController: NavController, userId: String?, auth: FirebaseAuth) {
+//    val userIdTest = "PPQH4E4bLIfORaMH9p30GkEQlQs2"
     val items = getListItems(userId)
-    DisplayList(items, navController, userId, auth)
+    DisplayList(items, navController, userId)
 }
 
 @Composable
@@ -87,21 +73,23 @@ fun ListItem(item: ListItem) {
         }
     }
 }
-private fun getListItems(userId: String?): MutableList<Order>{
+
+private fun getListItems(userId: String?): MutableList<Order> {
     val db = FirebaseFirestore.getInstance()
     var listItems = mutableStateListOf<Order>()
+
 
     db.collection("Jobs")
         .whereEqualTo("driver_id", userId)
         .whereEqualTo("state", "reserved")
         .orderBy("time_created", Query.Direction.ASCENDING)
         .addSnapshotListener { value, e ->
-            if(e != null){
+            if (e != null) {
                 Log.w("fetchOpenOrders", "Listen failed with ", e)
                 return@addSnapshotListener
             }
             listItems.clear()
-            for (doc in value!!){
+            for (doc in value!!) {
                 val order = doc.toObject<Order>()
                 order.order_id = doc.id
                 listItems.add(order)
@@ -116,30 +104,30 @@ fun DisplayList(
     items: MutableList<Order>,
     navController: NavController,
     userId: String?,
-    auth: FirebaseAuth
 ) {
-    var selectedId by rememberSaveable { mutableStateOf("")}
+    var selectedId by rememberSaveable { mutableStateOf("") }
     Log.d("DisplayList", "$userId")
-    
+
     Scaffold(
-        topBar = { TopBar(navController)
+        topBar = {
+            TopBar(navController)
         },
         content = {
             Column(verticalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally){
+                horizontalAlignment = Alignment.CenterHorizontally) {
 
                 LazyColumn(modifier = Modifier
                     .padding(top = 20.dp, bottom = 50.dp, end = 5.dp)
                     .weight(3f)) {
-                    items(items.size){index ->
+                    items(items.size) { index ->
                         Row(
                             modifier = Modifier
-                                .clickable (onClick = {
+                                .clickable(onClick = {
                                     selectedId = items[index].order_id
                                     navController.navigate("${Screens.JobDelivered.route}/${selectedId}")
                                 })
-                        ){
+                        ) {
                             ItemRow(
                                 items[index],
                                 Modifier.fillParentMaxWidth()
@@ -151,7 +139,7 @@ fun DisplayList(
                     .fillMaxWidth()
                     .weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceEvenly){
+                    verticalArrangement = Arrangement.SpaceEvenly) {
                     Button(onClick = { navController.navigate("${Screens.OpenOrders.route}/${userId}") },
                         shape = MaterialTheme.shapes.medium,
                         modifier = Modifier
@@ -162,31 +150,35 @@ fun DisplayList(
                         Text("Avoimet keikat", color = White, style =  MaterialTheme.typography.body1)
                     }
 
-                    Button(onClick = { navController.navigate("${Screens.JobHistory.route}/${userId}")},
-                         shape = MaterialTheme.shapes.medium,
-                         modifier = Modifier
-                             .padding(bottom = 10.dp)
-                             .height(70.dp)
-                             .width(200.dp)) {
+
+                    Button(onClick = { navController.navigate("${Screens.JobHistory.route}/${userId}") },
+                        shape = MaterialTheme.shapes.medium,
+                        modifier = Modifier
+                            .padding(bottom = 10.dp)
+                            .height(70.dp)
+                            .width(200.dp),
+                        )
+                    {
 
                         Text("Kuitatut keikat", color = White, style =  MaterialTheme.typography.body1)
                     }
                 }
             }
         })
+
 }
 
 @Composable
-fun ItemRow(item: Order, modifier: Modifier){
+fun ItemRow(item: Order, modifier: Modifier) {
     Row(
         modifier
-            .padding(8.dp, top = 20.dp)
+            .padding(start = 15.dp, end = 10.dp, top = 20.dp)
             .border(
                 border = BorderStroke(1.dp, MaterialTheme.colors.primaryVariant),
                 shape = RoundedCornerShape(8.dp)
             )
             .padding(10.dp),
-    ){
+    ) {
         Column(
             modifier
                 .padding(2.dp)
@@ -197,7 +189,7 @@ fun ItemRow(item: Order, modifier: Modifier){
             Text("Yritys: " + item.company)
             Text("Luotu: " + item.time_created?.toDate()?.getStringTimeStampWithDate())
         }
-}
+    }
 }
 
 @Preview(showBackground = true)
@@ -205,6 +197,7 @@ fun ItemRow(item: Order, modifier: Modifier){
 fun DefaultPreview() {
     DriverSite(
         rememberNavController(), userId = String.toString(), auth = FirebaseAuth.getInstance()
-    )}
+    )
+}
 
 

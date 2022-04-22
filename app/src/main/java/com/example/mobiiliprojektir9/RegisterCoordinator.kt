@@ -33,14 +33,14 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 
 @Composable
-fun RegisterCoordinator(navController: NavController){
+fun RegisterCoordinator(navController: NavController) {
     val context = LocalContext.current
-    var emailErrorState by remember { mutableStateOf(false)}
-    var passwordErrorState by remember { mutableStateOf(false)}
-    var passwordVisibility by remember { mutableStateOf(true)}
-    var companyErrorState by remember { mutableStateOf(false)}
-    var phoneNumErrorState by remember { mutableStateOf(false)}
-    var showLoading by remember { mutableStateOf(false)}
+    var emailErrorState by remember { mutableStateOf(false) }
+    var passwordErrorState by remember { mutableStateOf(false) }
+    var passwordVisibility by remember { mutableStateOf(false) }
+    var companyErrorState by remember { mutableStateOf(false) }
+    var phoneNumErrorState by remember { mutableStateOf(false) }
+    var showLoading by remember { mutableStateOf(false) }
 
     var emailState by remember {
         mutableStateOf("")
@@ -242,7 +242,7 @@ fun RegisterCoordinator(navController: NavController){
                             setEmailErrorState = { emailErrorState = it },
                             phonenumState,
                             companyState,
-                            setLoadingAnimation = {showLoading = it}
+                            setLoadingAnimation = { showLoading = it }
                         )
                     }
                 }
@@ -258,7 +258,7 @@ private fun saveCoordinatorData(
     context: Context,
     user: FirebaseUser,
     navController: NavController,
-    setLoadingAnimation: (Boolean) -> Unit
+    setLoadingAnimation: (Boolean) -> Unit,
 ) {
     val userId = coordinatorData.coordinatorId
     val db = FirebaseFirestore.getInstance()
@@ -274,12 +274,13 @@ private fun saveCoordinatorData(
         .addOnFailureListener { e ->
             setLoadingAnimation(false)
             Log.w(ControlsProviderService.TAG, "Error adding document", e)
-            user.delete().addOnCompleteListener{task ->
-                if(task.isSuccessful){
+            user.delete().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
                     Log.d(ControlsProviderService.TAG, "User account deleted")
                 }
             }
-            Toast.makeText(context, "Tallettaminen tietokantaan epäonnistui", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Tallettaminen tietokantaan epäonnistui", Toast.LENGTH_SHORT)
+                .show()
         }
 }
 
@@ -292,7 +293,7 @@ private fun coordinatorRegister(
     setEmailErrorState: (Boolean) -> Unit,
     registerPhoneNum: String,
     registerCompany: String,
-    setLoadingAnimation: (Boolean) -> Unit
+    setLoadingAnimation: (Boolean) -> Unit,
 ) {
     val auth: FirebaseAuth = FirebaseAuth.getInstance()
     Log.d("auth", "create user")
@@ -311,19 +312,22 @@ private fun coordinatorRegister(
                     phoneNum = registerPhoneNum
                     company = registerCompany
                 }
-                saveCoordinatorData(coordinatorData, context, user, navController, setLoadingAnimation)
+                saveCoordinatorData(coordinatorData,
+                    context,
+                    user,
+                    navController,
+                    setLoadingAnimation)
             }
 
         } else {
             setLoadingAnimation(false)
             Log.d("AUTH", "Failed: ${task.exception}")
             Toast.makeText(context, "${task.exception}", Toast.LENGTH_SHORT).show()
-            if(task.exception.toString() == "com.google.firebase.auth.FirebaseAuthWeakPasswordException: The given password is invalid. [ Password should be at least 6 characters ]"){
+            if (task.exception.toString() == "com.google.firebase.auth.FirebaseAuthWeakPasswordException: The given password is invalid. [ Password should be at least 6 characters ]") {
                 setPasswordErrorState(true)
-            }
-            else if(task.exception.toString() == "com.google.firebase.auth.FirebaseAuthInvalidCredentialsException: The email address is badly formatted."
-                || task.exception.toString() =="com.google.firebase.auth.FirebaseAuthUserCollisionException: The email address is already in use by another account.")
-                {
+            } else if (task.exception.toString() == "com.google.firebase.auth.FirebaseAuthInvalidCredentialsException: The email address is badly formatted."
+                || task.exception.toString() == "com.google.firebase.auth.FirebaseAuthUserCollisionException: The email address is already in use by another account."
+            ) {
                 setEmailErrorState(true)
             }
         }

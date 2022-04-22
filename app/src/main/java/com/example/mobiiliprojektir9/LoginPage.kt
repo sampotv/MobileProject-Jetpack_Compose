@@ -11,6 +11,8 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -29,13 +31,12 @@ import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 
-
 @Composable
 fun Login(navController: NavController, auth: FirebaseAuth) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var passwordVisibility by rememberSaveable { mutableStateOf(false) }
-    var showLoading = remember {mutableStateOf(false)}
+    var showLoading = remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     Column(
@@ -190,7 +191,7 @@ private fun updateUI(userId: String, navController: NavController) {
         })
 }
 
-private fun loginWithCredentials(){
+private fun loginWithCredentials() {
 
 }
 

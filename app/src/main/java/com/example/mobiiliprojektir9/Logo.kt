@@ -18,7 +18,6 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
@@ -45,7 +44,6 @@ private val logoTheme = defaultShimmerTheme.copy(
     shimmerWidth = 400.dp,
 )
 
-@Preview
 @Composable
 fun Logo() {
 
@@ -69,4 +67,5 @@ fun Logo() {
 
     }
 }
+
 

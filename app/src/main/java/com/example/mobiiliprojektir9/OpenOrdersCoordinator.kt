@@ -122,7 +122,7 @@ private fun OrderRow(
     Log.d("OrderRow", job.order_id)
     Column(
         modifier
-            .padding(8.dp, top = 20.dp)
+            .padding(start = 8.dp, end = 8.dp, top = 20.dp)
             .border(
                 border = BorderStroke(1.dp, MaterialTheme.colors.primaryVariant),
                 shape = RoundedCornerShape(8.dp)
@@ -150,7 +150,7 @@ private fun OrderRow(
                         reserveJob(job.order_id, selectedDriver, db, context, onJobReserved)
                     }
                 ) {
-                    Text(text = "Varaa keikka kuljettajalle")
+                    Text(text = "Varaa keikka kuljettajalle", style = MaterialTheme.typography.body1)
                 }
             }
         }

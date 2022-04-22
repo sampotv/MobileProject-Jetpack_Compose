@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.Divider
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -37,57 +38,79 @@ fun ClosedDeliveries(
     navController: NavController,
     userId: String?
 
-){
+) {
     val db = FirebaseFirestore.getInstance()
-    var companyState by remember { mutableStateOf("")}
-    getCompany(userId, db, setCompanyState = {companyState = it})
-    var jobs by remember { mutableStateOf(mutableListOf<Order>())}
-    getClosedOrdersDriver(db, userId, setJobs = { jobs = it}, companyState)
-    var showImage by remember { mutableStateOf(false)}
-    var imageUrl by remember { mutableStateOf("")}
-    Column(
-        modifier = Modifier
-            .padding(24.dp)
-            .fillMaxSize()
-            .background(Color.White),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ){
-        Text(
-            text = "Ajetut keikat",
-            style = MaterialTheme.typography.h5
-        )
-        Spacer(modifier = Modifier.width(24.dp))
-        LazyColumn(
-            modifier = Modifier
-                .weight(1f)
-                .padding(start = 20.dp, end = 20.dp)
-                .clickable {  }
-        ){
-            items(jobs){job ->
-                ClosedOrderRow(
-                    job,
-                    Modifier.fillParentMaxWidth(),
-                    onShowImage = {showImage = it},
-                    setImageUrl = {imageUrl = it}
-                )
-            }
-        }
-        if(showImage){
-            Box(
-                modifier = Modifier.fillMaxSize()
-            ){
-                IconButton(
-                    onClick = { showImage = false },
-                    modifier = Modifier.align(Alignment.TopEnd)
-                ) {
-                    Icon(imageVector = Icons.Default.Close, contentDescription = null)
+    var companyState by remember { mutableStateOf("") }
+    getCompany(userId, db, setCompanyState = { companyState = it })
+    var jobs by remember { mutableStateOf(mutableListOf<Order>()) }
+    getClosedOrdersDriver(db, userId, setJobs = { jobs = it }, companyState)
+    var showImage by remember { mutableStateOf(false) }
+    var imageUrl by remember { mutableStateOf("") }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                elevation = 4.dp,
+                title = { Text(text = "Ajetut keikat") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.navigate("${Screens.CreateJob.route}/${userId}") }) {
+                        Icon(Icons.Filled.ArrowBack, null, tint = Color.White)
+                    }
+                },
+                actions = {
+                    LogOut(navController)
                 }
-                Image(
-                    painter = rememberImagePainter(imageUrl),
-                    contentDescription = null,
+            )
+        }
+
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(24.dp)
+                .fillMaxSize()
+                .background(Color.White),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
+            Text(
+                text = "Ajetut keikat",
+                style = MaterialTheme.typography.h5
+            )
+            Spacer(modifier = Modifier.width(24.dp))
+            LazyColumn(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 20.dp, end = 20.dp)
+                    .clickable { }
+            ) {
+                items(jobs) { job ->
+                    ClosedOrderRow(
+                        job,
+                        Modifier.fillParentMaxWidth(),
+                        onShowImage = { showImage = it },
+                        setImageUrl = { imageUrl = it }
+                    )
+                }
+            }
+            if (showImage) {
+                Box(
                     modifier = Modifier.fillMaxSize()
-                )
+                ) {
+                    IconButton(
+                        onClick = { showImage = false },
+                        modifier = Modifier.align(Alignment.TopEnd)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = null,
+                            tint = MaterialTheme.colors.primary
+                        )
+                    }
+                    Image(
+                        painter = rememberImagePainter(imageUrl),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
             }
         }
     }
