@@ -52,7 +52,7 @@ fun ClosedDeliveries(
                 elevation = 4.dp,
                 title = { Text(text = "Ajetut keikat") },
                 navigationIcon = {
-                    IconButton(onClick = { navController.navigate("${Screens.CreateJob.route}/${userId}") }) {
+                    IconButton(onClick = { navController.navigate("${Screens.DriverSite.route}/${userId}") }) {
                         Icon(Icons.Filled.ArrowBack, null, tint = Color.White)
                     }
                 },
