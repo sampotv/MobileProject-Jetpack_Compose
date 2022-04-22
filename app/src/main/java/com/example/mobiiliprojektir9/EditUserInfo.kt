@@ -1,136 +1,128 @@
 package com.example.mobiiliprojektir9
 
+import android.app.Notification
+import android.graphics.Paint
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import androidx.ui.text.font.FontSynthesis
+import com.example.mobiiliprojektir9.ui.theme.MobiiliprojektiR9Theme
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 
 @Composable
-fun AppTextField(
-    modifier: Modifier = Modifier,
-    text: String,
-    placeholder: String,
-    onChange: (String) -> Unit = {},
-    imeAction: ImeAction = ImeAction.Next,
-    keyboardType: KeyboardType = KeyboardType.Text,
-    keyBoardActions: KeyboardActions = KeyboardActions(),
-    isEnabled: Boolean = true,
-    VisualTransformation: PasswordVisualTransformation,
-) {
-
-    OutlinedTextField(
-        modifier = modifier.fillMaxWidth(),
-        value = text,
-        onValueChange = onChange,
-        Style =  TextStyle(fontSize = 18.sp),
-        keyboardOptions = KeyboardOptions(imeAction = imeAction, keyboardType = keyboardType),
-        keyboardActions = keyBoardActions,
-        enabled = isEnabled,
-        Color = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = androidx.compose.ui.graphics.Color.Black,
-            unfocusedBorderColor = androidx.compose.ui.graphics.Color.Gray,
-            disabledBorderColor = androidx.compose.ui.graphics.Color.Gray,
-            disabledTextColor = androidx.compose.ui.graphics.Color.Black
-        ),
-        placeholder =
-            Text(text = placeholder, style = TextStyle(fontSize = 18.sp, color = Color.Gray)))
+fun Show(userId: String, navController: NavController){
 
 
+    var emailAddress by remember {mutableStateOf("")}
+    var mobileNumber by remember {mutableStateOf("")}
+    var companyName by remember {mutableStateOf("")}
+    var password by remember {mutableStateOf("")}
 
-    class FormViewModel : ViewModel() {
-
-        var emailAddress by mutableStateOf("");
-        var mobileNumber by mutableStateOf("");
-        var companyName by mutableStateOf("");
-        var password by mutableStateOf("");
-    }
-
-    Column() {
-    val focusManager = LocalFocusManager.current
-
-    AppTextField(
-        text = ViewModel.emailAddress,
-        placeholder = "Sähköposti",
-        onChange = {
-            ViewModel.emailAddress = it
-        },
-        imeAction = ImeAction.Next,//Show next as IME button
-        keyboardType = KeyboardType.Text, //Plain text keyboard
-        keyBoardActions = KeyboardActions(
-            onNext = {
-                focusManager.moveFocus(FocusDirection.Down)
-            }
-        ),
-        VisualTransformation = PasswordVisualTransformation()
-    )
-
-    AppTextField(
-        text = ViewModel.mobileNumber,
-        placeholder = "Puhelinnumero",
-        onChange = {
-            ViewModel.mobileNumber = it
-        },
-        imeAction = ImeAction.Next,//Show next as IME button
-        keyboardType = KeyboardType.Phone,
-        keyBoardActions = KeyboardActions(
-            onNext = {
-                focusManager.moveFocus(FocusDirection.Down)
-            }
-        ),
-        VisualTransformation = PasswordVisualTransformation()
-    )
-
-    AppTextField(
-        text = ViewModel.companyName,
-        placeholder = "Yritys",
-        onChange = {
-            ViewModel.companyName = it
-        },
-        imeAction = ImeAction.Next,
-        keyboardType = KeyboardType.Text,
-        keyBoardActions = KeyboardActions(
-            onNext = {
-                focusManager.moveFocus(FocusDirection.Down)
-            }
-        ),
-        VisualTransformation = PasswordVisualTransformation()
-    )
+    Column(modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.SpaceEvenly,
+                Alignment.CenterHorizontally) {
 
 
-    AppTextField(
-        text = ViewModel.password,
-        placeholder = "Salasana",
-        onChange = {
-            ViewModel.password = it
-        },
-        imeAction = ImeAction.Done,
-        VisualTransformation = PasswordVisualTransformation(),
-        keyboardType = KeyboardType.Password,
-    )
-        var db = FirebaseFirestore.getInstance()
+     TextField(value = emailAddress,
+         onValueChange = {emailAddress = it},
+         placeholder = {Text("Sähköposti")},
+         keyboardOptions = KeyboardOptions(
+             keyboardType = KeyboardType.Email,
+             imeAction = ImeAction.Next),
+     colors = TextFieldDefaults.outlinedTextFieldColors(
+         focusedBorderColor = Color.Black,
+         unfocusedBorderColor = Color.Gray,
+         disabledBorderColor = Color.Gray,
+         disabledTextColor = Color.Black),
+         textStyle = TextStyle(fontSize = 18.sp))
 
-        Button(onClick = { /* siirrä tiedot tietokantaan */ }, colors = ButtonDefaults.textButtonColors(
+        TextField(value = password,
+            onValueChange = {password = it},
+            placeholder = {Text("Salasana")},
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Next),
+            visualTransformation = PasswordVisualTransformation(),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Color.Black,
+                unfocusedBorderColor = Color.Gray,
+                disabledBorderColor = Color.Gray,
+                disabledTextColor = Color.Black),
+            textStyle = TextStyle(fontSize = 18.sp))
+
+        TextField(value = mobileNumber,
+            onValueChange = {mobileNumber = it},
+            placeholder = {Text("Puhelinnumero")},
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Next),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Color.Black,
+                unfocusedBorderColor = Color.Gray,
+                disabledBorderColor = Color.Gray,
+                disabledTextColor = Color.Black),
+            textStyle = TextStyle(fontSize = 18.sp))
+
+        TextField(value = companyName,
+            onValueChange = {companyName = it},
+            placeholder = {Text("Yritys")},
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Done),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Color.Black,
+                unfocusedBorderColor = Color.Gray,
+                disabledBorderColor = Color.Gray,
+                disabledTextColor = Color.Black),
+            textStyle = TextStyle(fontSize = 18.sp))
+
+        val db = FirebaseFirestore.getInstance()
+
+        Button(onClick = { db.collection("DriverData").whereEqualTo("drivers", userId)
+                .update(mapOf(
+                "email" to emailAddress,
+                "password" to password,
+                "company" to companyName,
+                "phoneNum" to mobileNumber
+            ))
+
+
+        }, colors = ButtonDefaults.textButtonColors(
             backgroundColor = Color.Blue
         )) {
-            Text("Päivitä profiili")
+            Text("Päivitä profiili", color = Color.White)
         }
 
 }}
+
+
+
+
+
+@Preview(showSystemUi = true)
+@Composable
+fun Show() {
+
+}
 
