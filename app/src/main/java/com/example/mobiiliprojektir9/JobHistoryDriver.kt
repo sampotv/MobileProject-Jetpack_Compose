@@ -16,8 +16,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.TabRowDefaults.Divider
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,15 +34,14 @@ import com.google.firebase.firestore.ktx.toObject
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 @Composable
 fun ClosedDeliveries(
     navController: NavController,
-    userId: String?,
-    jobs: MutableList<Order> = getClosedOrders(userId = String()),
-    auth: FirebaseAuth
+    userId: String?
 
 ){
+    val db = FirebaseFirestore.getInstance()
+    val jobs = getClosedOrders( userId, db  )
     Column(
         modifier = Modifier
             .padding(24.dp)
@@ -102,11 +100,10 @@ fun Date.getStringTimeStampWithDate2(): String {
     return dateFormat.format(this)
 }
 
-fun getClosedOrders(userId: String?): MutableList<Order>{
+fun getClosedOrders(userId: String?, db: FirebaseFirestore ): MutableList<Order>{
     Log.d("function", "getOpenOrders")
     var jobs =  mutableStateListOf<Order>()
-    val db = FirebaseFirestore.getInstance()
-    //var userId ="0x9wuvADneBN8osaiq4C" //testausta varten
+    //var userId ="PPQH4E4bLIfORaMH9p30GkEQlQs2" //testausta varten
     db.collection("Jobs")
         .whereEqualTo("driver_id", userId)
         .whereEqualTo("state", "closed")
@@ -132,5 +129,5 @@ fun getClosedOrders(userId: String?): MutableList<Order>{
 @Preview
 @Composable
 fun ClosedDeliveryPreview(){
-    ClosedDeliveries(rememberNavController(), userId = String.toString(), auth = FirebaseAuth.getInstance())
+    ClosedDeliveries(rememberNavController(), userId = String.toString())
 }
