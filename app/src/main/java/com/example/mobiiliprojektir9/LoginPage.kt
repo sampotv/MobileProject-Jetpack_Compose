@@ -67,6 +67,7 @@ fun Login(navController: NavController, auth: FirebaseAuth) {
                 .width(300.dp)
                 .wrapContentHeight(align = Alignment.CenterVertically),
             maxLines = 1,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             shape = MaterialTheme.shapes.large,
             colors = TextFieldDefaults.textFieldColors(
                 backgroundColor = Color.White,

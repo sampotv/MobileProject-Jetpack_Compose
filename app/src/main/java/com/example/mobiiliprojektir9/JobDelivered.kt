@@ -81,7 +81,7 @@ fun Receipt(
         {
             Spacer(modifier = Modifier.padding(10.dp))
             Text(text = "Keikan kuittaus", fontSize = 30.sp)
-            TabRowDefaults.Divider(color = Color.Black, thickness = 5.dp)
+            TabRowDefaults.Divider(color = MaterialTheme.colors.primary, thickness = 5.dp)
             //Spacer(modifier = Modifier.padding(5.dp))
             if(updateSuccess) {
                 Column(
