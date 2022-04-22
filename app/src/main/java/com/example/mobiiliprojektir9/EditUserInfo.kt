@@ -2,13 +2,13 @@ package com.example.mobiiliprojektir9
 
 import android.app.Notification
 import android.graphics.Paint
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import android.util.Log
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,9 +22,11 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import androidx.ui.text.font.FontSynthesis
+import com.example.mobiiliprojektir9.ui.theme.LogOut
 import com.example.mobiiliprojektir9.ui.theme.MobiiliprojektiR9Theme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -33,16 +35,32 @@ import com.google.firebase.firestore.FirebaseFirestore
 @Composable
 fun Show(userId: String, navController: NavController){
 
-
+    // testi: val userId = "PPQH4E4bLIfORaMH9p30GkEQlQs2"
     var emailAddress by remember {mutableStateOf("")}
     var mobileNumber by remember {mutableStateOf("")}
     var companyName by remember {mutableStateOf("")}
     var password by remember {mutableStateOf("")}
 
-    Column(modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.SpaceEvenly,
-                Alignment.CenterHorizontally) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                elevation = 4.dp,
+                title = { Text(text = "Profiili ") },
+                navigationIcon = {
+                    IconButton(onClick = { /* hamburger menu käyttäjälle tai keikoile emt mby*/ }) {
+                        Icon(Icons.Filled.Menu, "menu", tint = Color.White)
+                    }
+                },
+                actions = {
+                    LogOut(navController)
+                }
+            )
+        },
 
+        content = {   Column(modifier = Modifier.fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally) {
+
+            Spacer(Modifier.height(50.0.dp))
 
      TextField(value = emailAddress,
          onValueChange = {emailAddress = it},
@@ -56,6 +74,8 @@ fun Show(userId: String, navController: NavController){
          disabledBorderColor = Color.Gray,
          disabledTextColor = Color.Black),
          textStyle = TextStyle(fontSize = 18.sp))
+
+        Spacer(Modifier.height(30.0.dp))
 
         TextField(value = password,
             onValueChange = {password = it},
@@ -71,6 +91,8 @@ fun Show(userId: String, navController: NavController){
                 disabledTextColor = Color.Black),
             textStyle = TextStyle(fontSize = 18.sp))
 
+        Spacer(Modifier.height(30.0.dp))
+
         TextField(value = mobileNumber,
             onValueChange = {mobileNumber = it},
             placeholder = {Text("Puhelinnumero")},
@@ -83,6 +105,8 @@ fun Show(userId: String, navController: NavController){
                 disabledBorderColor = Color.Gray,
                 disabledTextColor = Color.Black),
             textStyle = TextStyle(fontSize = 18.sp))
+
+        Spacer(Modifier.height(30.0.dp))
 
         TextField(value = companyName,
             onValueChange = {companyName = it},
@@ -97,24 +121,33 @@ fun Show(userId: String, navController: NavController){
                 disabledTextColor = Color.Black),
             textStyle = TextStyle(fontSize = 18.sp))
 
+        Spacer(Modifier.height(30.0.dp))
+
         val db = FirebaseFirestore.getInstance()
 
-        Button(onClick = { db.collection("DriverData").whereEqualTo("drivers", userId)
-                .update(mapOf(
-                "email" to emailAddress,
-                "password" to password,
-                "company" to companyName,
-                "phoneNum" to mobileNumber
-            ))
+        Button(onClick = { db.collection("drivers")
+            .whereEqualTo("driverId", userId)
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    document.reference.update(mapOf(
+                        "email" to emailAddress,
+                        "password" to password,
+                        "company" to companyName,
+                        "phoneNum" to mobileNumber
+                    ))
+                }
+            }
+            .addOnFailureListener{ exception ->
+                Log.w("Failed, ", "Error getting document: ", exception)
+            }
 
-
-        }, colors = ButtonDefaults.textButtonColors(
-            backgroundColor = Color.Blue
-        )) {
-            Text("Päivitä profiili", color = Color.White)
+        })
+        {
+            Text(text = "Päivitä tiedot")
         }
 
-}}
+}})}
 
 
 
@@ -122,7 +155,9 @@ fun Show(userId: String, navController: NavController){
 
 @Preview(showSystemUi = true)
 @Composable
-fun Show() {
-
+fun ShowPreview() {
+    MobiiliprojektiR9Theme {
+        Show(userId = String.toString(), rememberNavController())
+    }
 }
 
