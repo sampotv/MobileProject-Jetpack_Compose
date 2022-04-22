@@ -270,7 +270,7 @@ fun DropDownMenuCompanies(
         Icons.Filled.KeyboardArrowDown
     }
 
-    Column(modifier = Modifier.padding(20.dp)) {
+    Column(modifier = Modifier.fillMaxWidth()) {
 
         TextField(
             value = company,
@@ -280,6 +280,7 @@ fun DropDownMenuCompanies(
                 .onGloballyPositioned { coordinates ->
                     textFieldSize = coordinates.size.toSize()
                 },
+            shape = RoundedCornerShape(8.dp),
             label = { Text(text = "Valitse yritys") },
             trailingIcon = {
                 Icon(icon, "", Modifier.clickable { expanded = !expanded })
@@ -290,7 +291,6 @@ fun DropDownMenuCompanies(
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent
             )
-
         )
         DropdownMenu(
             expanded = expanded,

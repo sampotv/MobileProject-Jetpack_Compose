@@ -113,7 +113,7 @@ fun ClosedOrderCompanyRow(job: Order, modifier: Modifier, onShowImage: (Boolean)
         modifier
             .padding(8.dp, top = 20.dp)
             .border(
-                border = BorderStroke(1.dp, Color.Black),
+                border = BorderStroke(1.dp, MaterialTheme.colors.primaryVariant),
                 shape = RoundedCornerShape(8.dp)
             )
             .padding(10.dp),
