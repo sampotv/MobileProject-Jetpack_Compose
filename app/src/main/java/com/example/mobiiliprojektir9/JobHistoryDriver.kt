@@ -71,10 +71,6 @@ fun ClosedDeliveries(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            Text(
-                text = "Ajetut keikat",
-                style = MaterialTheme.typography.h5
-            )
             Spacer(modifier = Modifier.width(24.dp))
             LazyColumn(
                 modifier = Modifier
