@@ -3,6 +3,7 @@ package com.example.mobiiliprojektir9
 import android.content.ContentValues.TAG
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -10,6 +11,8 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -27,23 +30,33 @@ import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 
-
 @Composable
 fun Login(navController: NavController, auth: FirebaseAuth) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var passwordVisibility by rememberSaveable { mutableStateOf(false) }
-    var showLoading = remember {mutableStateOf(false)}
+    var showLoading = remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     Column(
-        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        MaterialTheme.colors.primary,
+                        MaterialTheme.colors.primaryVariant
+                    )
+                )
+            )
     )
     {
         Spacer(modifier = Modifier.padding(20.dp))
-        Text(text = "Kirjaudu sisään", fontSize = 20.sp)
+        Logo()
+        Spacer(modifier = Modifier.padding(10.dp))
+        Text(text = "Kirjaudu sisään", fontSize = 20.sp, color = Color.White)
         Spacer(modifier = Modifier.padding(5.dp))
         TextField(
             value = email,
@@ -52,7 +65,14 @@ fun Login(navController: NavController, auth: FirebaseAuth) {
             modifier = Modifier
                 .width(300.dp)
                 .wrapContentHeight(align = Alignment.CenterVertically),
-            maxLines = 1
+            maxLines = 1,
+            shape = MaterialTheme.shapes.large,
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = Color.White,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
+            )
         )
 
         TextField(value = password,
@@ -73,15 +93,21 @@ fun Login(navController: NavController, auth: FirebaseAuth) {
                     )
 
                 }
-            }
+            },
+            shape = MaterialTheme.shapes.large,
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = Color.White,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
+            )
         )
-        Spacer(modifier = Modifier.padding(20.dp))
-        if(showLoading.value)
-        {
+        if (showLoading.value) {
             LoadingAnimation()
         }
-        Spacer(modifier = Modifier.padding(20.dp))
+        Spacer(modifier = Modifier.padding(10.dp))
         Button(
+            shape = MaterialTheme.shapes.medium,
             onClick = {
                 showLoading.value = true
                 if (email.isEmpty() || password.isEmpty()) {
@@ -131,12 +157,15 @@ fun Login(navController: NavController, auth: FirebaseAuth) {
             },
             modifier = Modifier.size(220.dp, 50.dp)
         ) {
-            Text("Kirjaudu sisään")
+            Text("Kirjaudu sisään", style =  MaterialTheme.typography.body1)
         }
-        Spacer(modifier = Modifier.padding(40.dp))
+        Spacer(modifier = Modifier.padding(5.dp))
         Text("Uusi käyttäjä? Rekisteröidy täältä!")
-        Button(onClick = { navController.navigate(route = Screens.RegisterAs.route) }) {
-            Text("Rekisteröidy")
+        Button(
+            shape = MaterialTheme.shapes.medium,
+            modifier = Modifier.size(220.dp, 50.dp),
+            onClick = { navController.navigate(route = Screens.RegisterAs.route) }) {
+            Text("Rekisteröidy", style =  MaterialTheme.typography.body1)
         }
     }
 }
@@ -161,7 +190,7 @@ private fun updateUI(userId: String, navController: NavController) {
         })
 }
 
-private fun loginWithCredentials(){
+private fun loginWithCredentials() {
 
 }
 
