@@ -17,11 +17,11 @@ import androidx.navigation.NavController
 import com.example.mobiiliprojektir9.ui.theme.LogOut
 
 @Composable
-fun TopBar(navController: NavController) {
+fun TopBar(navController: NavController, keikka: String) {
     var showMenu by remember { mutableStateOf(false) }
     TopAppBar(
         elevation = 4.dp,
-        title = { Text(text = "Keikat") },
+        title = { Text(text = keikka) },
         navigationIcon = {
             IconButton(onClick = { showMenu = !showMenu }) {
                 Icon(Icons.Filled.Menu, "menu", tint = Color.White)
