@@ -103,5 +103,24 @@ fun SetUpNavigation(navController : NavHostController, auth: FirebaseAuth) {
         ) { backStackEntry ->
             ClosedDeliveries(navController = navController, backStackEntry.arguments?.getString("userId"))
         }*/
+
+        composable(
+            route = Screens.EditUserInfo.route + "/{userId}"
+        ){ backStackEntry ->
+            Show(
+                navController = navController,
+                backStackEntry.arguments?.getString("userId")
+            )
+
+        }
+        composable(
+            route = Screens.EditCoordInfo.route + "/{userId}"
+        ){ backStackEntry ->
+            Profile(
+                navController = navController,
+                backStackEntry.arguments?.getString("userId")
+            )
+
+        }
     }
 }

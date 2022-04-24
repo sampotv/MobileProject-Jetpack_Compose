@@ -67,7 +67,7 @@ fun CreateJob(navController: NavController, userId: String?) {
 
     Scaffold(
         topBar = {
-            TopBar(navController, "Keikat")
+            TopBar(navController, "Keikat", userId = String.toString())
         },
         content = {
             Column(
