@@ -3,6 +3,7 @@ package com.example.mobiiliprojektir9
 import android.app.Notification
 import android.graphics.Paint
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -11,17 +12,21 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Gray
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -41,6 +46,8 @@ fun Profile(navController: NavController, userId: String?){
     var mobileNumber by remember {mutableStateOf("")}
     var companyName by remember {mutableStateOf("")}
     var password by remember {mutableStateOf("")}
+    var passwordVisibility by rememberSaveable { mutableStateOf(false) }
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -84,13 +91,22 @@ fun Profile(navController: NavController, userId: String?){
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Next),
-                visualTransformation = PasswordVisualTransformation(),
+                visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = Color.Black,
                     unfocusedBorderColor = Color.Gray,
                     disabledBorderColor = Color.Gray,
                     disabledTextColor = Color.Black),
-                textStyle = TextStyle(fontSize = 18.sp))
+                textStyle = TextStyle(fontSize = 18.sp),
+                trailingIcon = {
+                    IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
+
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_visibility),
+                            contentDescription = "visibility"
+                        )
+
+                    }})
 
             Spacer(Modifier.height(30.0.dp))
 
@@ -125,6 +141,7 @@ fun Profile(navController: NavController, userId: String?){
             Spacer(Modifier.height(30.0.dp))
 
             val db = FirebaseFirestore.getInstance()
+            val auth = FirebaseAuth.getInstance()
 
             Button(onClick = { db.collection("coordinator")
                 .whereEqualTo("coordinatorId", userId)
@@ -137,7 +154,17 @@ fun Profile(navController: NavController, userId: String?){
                             "company" to companyName,
                             "phoneNum" to mobileNumber
                         ))
+                        auth.currentUser!!.updateEmail(emailAddress.trim()).addOnSuccessListener {
+                            Log.i("email", "onnistui")
+                        }
+                        auth.currentUser!!.updatePassword(password.trim()).addOnSuccessListener {
+                            Log.i("salasana", "onnistui")
+                        }
                     }
+                    Toast.makeText(
+                        context, "Käyttäjä tiedot päivitetty",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
                 .addOnFailureListener{ exception ->
                     Log.w("Failed, ", "Error getting document: ", exception)

@@ -111,7 +111,7 @@ fun DisplayList(
 
     Scaffold(
         topBar = {
-            TopBar(navController, "Omat keikat", userId = String.toString())
+            TopBar(navController, "Omat keikat", userId)
         },
         content = {
             Column(verticalArrangement = Arrangement.SpaceEvenly,
