@@ -14,4 +14,6 @@ sealed class Screens(val route : String)
     object JobDelivered : Screens(route = "job_delivered")
     object JobHistory : Screens(route = "job_history")
     object JobHistoryCompany : Screens(route = "job_history_company")
+    object EditCoordInfo : Screens(route = "edit_coord_info")
+    object EditUserInfo : Screens(route = "edit_user_info")
 }
