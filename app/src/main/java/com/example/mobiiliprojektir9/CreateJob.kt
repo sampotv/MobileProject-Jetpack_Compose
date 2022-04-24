@@ -194,7 +194,7 @@ fun CreateJob(navController: NavController, userId: String?) {
                             .height(50.dp),
                         shape = MaterialTheme.shapes.medium
                     ) {
-                        Text(text = "Kuitatut keikat", textAlign = TextAlign.Center, style = MaterialTheme.typography.body1)
+                        Text(text = "Ajetut keikat", textAlign = TextAlign.Center, style = MaterialTheme.typography.body1)
                     }
                 }
             }

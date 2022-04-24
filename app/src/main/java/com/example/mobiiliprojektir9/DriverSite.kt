@@ -161,7 +161,7 @@ fun DisplayList(
                         )
                     {
 
-                        Text("Kuitatut keikat", color = White, style =  MaterialTheme.typography.body1)
+                        Text("Ajetut keikat", color = White, style =  MaterialTheme.typography.body1)
                     }
                 }
             }
